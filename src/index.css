@@ -1,0 +1,72 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: "SF Pro Text";
+  font-style: normal;
+  font-weight: 300;
+  src: url("https://raw.githubusercontent.com/blaisck/sfwin/master/SFPro/TrueType/SFProText-Light.ttf");
+}
+@font-face {
+  font-family: "SF Pro Text";
+  font-style: normal;
+  font-weight: 400;
+  src: url("https://raw.githubusercontent.com/blaisck/sfwin/master/SFPro/TrueType/SFProText-Regular.ttf");
+}
+@font-face {
+  font-family: "SF Pro Text";
+  font-style: normal;
+  font-weight: 500;
+  src: url("https://raw.githubusercontent.com/blaisck/sfwin/master/SFPro/TrueType/SFProText-Medium.ttf");
+}
+@font-face {
+  font-family: "SF Pro Text";
+  font-style: normal;
+  font-weight: 600;
+  src: url("https://raw.githubusercontent.com/blaisck/sfwin/master/SFPro/TrueType/SFProText-SemiBold.ttf");
+}
+
+
+:root {
+  font-family: "SF Pro Text",system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: #000;
+  background-color: #fff;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+.dark{
+  color-scheme: dark;
+  color: #fff;
+  background-color: #000;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  
+}
+
+.text-main {
+  font-size: 26px;
+  font-weight: 590;
+}
+
+.text-secondary {
+  font-size: 17px;
+  font-weight: 400;
+}
+@utility no-scrollbar {
+  @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
