@@ -32,7 +32,7 @@ export default function ProductPage() {
     useEffect(() => {
         backButton.show();  
         const offClick = backButton.onClick(() => {
-          navigate(-1);    
+          navigate("/");    
         });
     
         return () => {
