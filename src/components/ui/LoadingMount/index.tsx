@@ -1,5 +1,8 @@
+import { useLaunchParams } from "@telegram-apps/sdk-react"
 import { motion } from "motion/react"
 import type { Variants } from "motion/react"
+import { useEffect } from "react"
+import { useNavigate } from "react-router"
 
 function LoadingMount() {
     const dotVariants: Variants = {
@@ -13,6 +16,16 @@ function LoadingMount() {
             },
         },
     }
+
+    const params = useLaunchParams()
+    const startParam = params.tgWebAppStartParam
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if (startParam) {
+            navigate("/product/" + startParam.split("_")[1])
+        }
+    }, [])
 
     return (
         <motion.div
