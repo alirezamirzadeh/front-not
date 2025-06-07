@@ -3,13 +3,10 @@
 import  { useEffect } from "react";
 import RoutesConfig from "./routes";
 import { backButton, miniApp,  themeParams, useSignal } from "@telegram-apps/sdk-react";
-import { useNavigate } from "react-router";
 
 function App() {
   const isDark = useSignal(themeParams.isDark);
-  const params = new URLSearchParams(window.location.search);
-  const startParam = params.get('product');
-  const navigate = useNavigate()
+
 
   useEffect(() => {
     backButton.mount();
@@ -27,9 +24,7 @@ function App() {
         miniApp.setHeaderColor(isDark ? "#ffffff" : "#000000");
       }
     }
-    if(startParam) {
-      navigate("/product/"+ startParam)
-    }
+  
   }, [isDark]);
 
   return <RoutesConfig />;
