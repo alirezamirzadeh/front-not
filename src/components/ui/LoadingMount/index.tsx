@@ -22,6 +22,8 @@ function LoadingMount() {
     const navigate = useNavigate()
 
     useEffect(() => {
+        console.log(startParam);
+        
         if (startParam) {
             navigate("/product/" + startParam.split("_")[1])
         }
