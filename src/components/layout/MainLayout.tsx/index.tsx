@@ -10,7 +10,7 @@ export default function MainLayout() {
 
     useEffect(() => {
         if (startParam) {
-            navigate("/product/" + startParam.split("_"[1]))
+            navigate("/product/" + startParam.split("_")[1])
         }
     }, [])
     return (

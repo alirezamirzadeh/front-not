@@ -7,7 +7,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     const handleShare = () => {
         const productUrl = `https://t.me/NOTFrontContestBot/start?startapp=product_${product.id}`;
         shareURL.ifAvailable(productUrl, `Check out this amazing product: ${product.name} ${product.images}`);
-        console.log(productUrl, `Check out this amazing product: ${product.name} ${product.category}`);
+  
         
         
       };
