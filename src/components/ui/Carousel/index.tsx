@@ -1,23 +1,31 @@
 import React, { useState, useEffect } from "react"
 import type { TouchEvent } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 
 export default function Carousel({
     children: slides,
     autoSlide = false,
     autoSlideInterval = 3000,
+    id
 }: {
     children: React.ReactNode[];
     autoSlide?: boolean;
     autoSlideInterval?: number;
+    id: number
 }) {
-    const [curr, setCurr] = useState(Math.floor(slides.length / 2))
+    const [curr, setCurr] = useState(id - 1)
+ // const [curr, setCurr] = useState(slides.length / 2)
+
     const [touchStart, setTouchStart] = useState<number | null>(null)
     const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
-    const prev = () =>
+    const prev = () => {
         setCurr((curr) => (curr === 0 ? slides.length - 1 : curr - 1))
-    const next = () =>
+    }
+
+    const next = () => {
         setCurr((curr) => (curr === slides.length - 1 ? 0 : curr + 1))
+    }
 
     useEffect(() => {
         if (!autoSlide) return
@@ -51,29 +59,33 @@ export default function Carousel({
     }
 
     return (
-        <div className="overflow-hidden relative w-full ">
-            <div
-                className="flex transition-transform ease-out duration-500 w-full"
-                style={{ transform: `translateX(-${curr * 100}%)` }}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-            >
-                {React.Children.map(slides, (slide) => (
-                    <div className="w-full flex-shrink-0">
-                        {slide}
-                    </div>
-                ))}
+        <div className="overflow-hidden relative w-full rounded-2xl">
+            <div className="relative w-full h-full  ">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={curr}
+                        initial={{ opacity: 1, scale: 1.5 }}
+                        animate={{ opacity: 1, scale: 1, x: 0 }}
+                        exit={{ opacity: 0.8, scale: 0.95, x: (touchStart && touchEnd) ? (touchStart - touchEnd > 0 ? -50 : 50) : 0 }}
+                        transition={{ duration: 0.4 }}
+                        className="w-full"
+                        onTouchStart={handleTouchStart}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={handleTouchEnd}
+                    >
+                        {slides[curr]}
+                    </motion.div>
+                </AnimatePresence>
             </div>
 
-            <div className="absolute bottom-[9px] right-0 left-0 ">
-                <div className="flex items-center justify-center gap-[3px]">
+            <div className="absolute bottom-[9px] right-0 left-0">
+                <div className="flex items-center  justify-center gap-[4px]">
                     {slides.map((_, i) => (
                         <div
                             key={i}
                             className={`
-              transition-all bg-white dark:bg-gray-200
-              ${curr === i
+                                transition-all bg-white/5 dark:bg-gray-200
+                                ${curr === i
                                     ? "w-[20px] h-[4px] rounded-[4px]"
                                     : `rounded-full ${Math.abs(i - curr) === 1
                                         ? "w-[4px] h-[4px] opacity-20"
@@ -82,7 +94,7 @@ export default function Carousel({
                                             : "w-[2px] h-[2px] opacity-20"
                                     }`
                                 }
-            `}
+                            `}
                         />
                     ))}
                 </div>

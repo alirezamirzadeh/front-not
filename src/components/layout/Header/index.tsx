@@ -1,16 +1,34 @@
+import { motion } from 'framer-motion';
 import SearchIcon from "@/components/icon/SearchIcon";
 import Cart from "@/components/ui/Cart";
+import FilterProducts from "@/components/ui/FilterProducts";
 
-export default function Header({ setIsSearching }: { setIsSearching: (state: boolean) => void }) {
+interface HeaderProps {
+    setIsSearching: (value: boolean) => void;
+}
+
+export default function Header({ setIsSearching }: HeaderProps) {
     return (
-        <div className="px-4 pt-4 flex justify-between items-center">
-            <p className="text-main">Not Store</p>
-            <div className="flex gap-2 items-center">
-                <button onClick={() => setIsSearching(true)}>
-                    <SearchIcon className="fill-black text-black w-[28px] h-[28px] dark:fill-white dark:text-white" />
-                </button>
-                <Cart />
+        <motion.header
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="sticky top-0 z-40 bg-white dark:bg-black border-b border-white dark:border-black"
+        >
+            <div className="flex items-center justify-between px-4 py-3">
+                <h1 className="text-main">Not Store</h1>
+                <div className="flex  items-center">
+                    <FilterProducts />
+                    <motion.button
+                        onClick={() => setIsSearching(true)}
+                        whileTap={{ scale: 0.95 }}
+                        className="p-1.5"
+                    >
+                        <SearchIcon className="w-[28px] h-[28px]" />
+                    </motion.button>
+                    <Cart />
+                </div>
             </div>
-        </div>
+        </motion.header>
     )
 }

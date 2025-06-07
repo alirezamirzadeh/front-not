@@ -18,3 +18,23 @@ export type ProductsState = {
     error: string | null;
     fetchProducts: () => Promise<void>;
 }
+
+export type ProductInfoProps = {
+    product: Product;
+}
+
+
+
+export type ProductImageProps ={
+    mainImage: string | undefined;
+    product: Product;
+    onThumbnailClick: (image: string) => void;
+}
+
+
+export type ProductCardProps = {
+    product: Product;
+    isInCart: boolean;
+    onImageLoad: (productId: number) => void;
+    isImageLoaded: boolean;
+}

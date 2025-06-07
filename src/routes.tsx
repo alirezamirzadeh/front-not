@@ -1,24 +1,29 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
-import AccountPage from './pages/AccountPage'
-import HomePage from './pages/HomePage'
-import MainLayout from './components/layout/MainLayout.tsx'
-import ProductPage from './pages/ProductPage/index.tsx'
 
+import MainLayout from './components/layout/MainLayout.tsx'
+import { Suspense, lazy } from 'react';
+import LoadingMount from './components/ui/LoadingMount/index.tsx';
+const HomePage = lazy(() => import('./pages/HomePage'));
+const AccountPage = lazy(() => import('./pages/AccountPage'));
+const ProductPage = lazy(() => import('./pages/ProductPage'));
 
 export default function RoutesConfig() {
     return (
+        <div className='bg-white text-black dark:bg-black dark:text-white'>
+            <Suspense fallback={<LoadingMount />}>
+                <BrowserRouter>
+                    <Routes>
 
-        <BrowserRouter>
-            <Routes>
+                        <Route path="/" element={<MainLayout />} >
+                            <Route index element={<HomePage />} ></Route>
+                            <Route path="/account" element={<AccountPage />} ></Route>
+                        </Route>
 
-                <Route path="/" element={<MainLayout />} >
-                    <Route index element={<HomePage />} ></Route>
-                    <Route path="/account" element={<AccountPage />} ></Route>
-                </Route>
+                        <Route path="/product/:id" element={<ProductPage />} />
 
-                <Route path="/product/:id" element={<ProductPage />} />
-
-            </Routes>
-        </BrowserRouter>
+                    </Routes>
+                </BrowserRouter>
+            </Suspense>
+        </div>
     )
 }

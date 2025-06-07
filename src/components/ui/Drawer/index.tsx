@@ -1,7 +1,7 @@
 
 import * as React from 'react'
 import { Drawer as DrawerPrimitive } from 'vaul'
-import { cn } from '../../../lib/ui'
+import { cn } from '@/lib/ui'
 
 
 const DrawerContext = React.createContext<{
@@ -50,7 +50,7 @@ const DrawerContent = React.forwardRef<
       <DrawerPrimitive.Content
         ref={ref}
         className={cn(
-          'fixed z-50 flex h-auto min-h-80 flex-col rounded-[20px] bg-white dark:bg-black',
+          'fixed z-50 flex min-h-[320px]  flex-col rounded-[20px] bg-white dark:bg-black text-black dark:text-white',
           (!direction || direction === 'bottom') && 'inset-x-0 bottom-0 mt-24',
           direction === 'top' && 'inset-x-0 top-0',
           direction === 'right' && 'right-0 top-0 h-screen w-[80vw] max-w-xs',
@@ -90,7 +90,7 @@ const DrawerFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn('mt-auto  h-[83px] flex flex-col gap-2 p-4', className)}
+    className={cn('mt-auto  absolute bottom-0 w-full bg-white dark:bg-black pt-2 h-[83px] flex flex-col gap-2 px-4', className)}
     {...props}
   />
 )
