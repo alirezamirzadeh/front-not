@@ -1,13 +1,14 @@
 import ShareIcon from "@/components/icon/ShareIcon";
 import type { ProductInfoProps } from "@/types/Product";
-import { shareURL } from "@telegram-apps/sdk-react";  // وارد کردن API تلگرام
+import { shareURL } from "@telegram-apps/sdk-react";  
 import { motion } from "motion/react";
 
 export const ProductInfo = ({ product }: ProductInfoProps) => {
     const handleShare = () => {
-        const productUrl = `https://t.me/NOTFrontContestBot/start?product=${product.id}`;
-        shareURL.ifAvailable(productUrl, `Check out this amazing product: ${product.name}`);
-        console.log(productUrl);
+        const productUrl = `https://t.me/NOTFrontContestBot/start?startapp=${product.id}`;
+        shareURL.ifAvailable(productUrl, `Check out this amazing product: ${product.name} ${product.images}`);
+        console.log(productUrl, `Check out this amazing product: ${product.name} ${product.category}`);
+        
         
       };
     return (
