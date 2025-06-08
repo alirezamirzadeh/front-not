@@ -69,7 +69,7 @@ export default function AccountPage() {
         />
       )}
 
-      {visibleCount < history.length && (
+      {visibleCount < history.length && history.length !==0 &&(
         <LoadingMore ref={sentinelRef} isLoading={isLoadingMore} />
       )}
     </motion.div>

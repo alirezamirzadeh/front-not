@@ -3,6 +3,9 @@ import Button from "../Button";
 import NotificationIcon from "@/components/icon/NotificationIcon";
 import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/ui";
+import { TonConnectButton, useTonConnectUI } from "@tonconnect/ui-react";
+import SuccessPayment from "../SuccessPayment";
+import { useState } from "react";
 
 export const CartControls = ({
     product,
@@ -11,9 +14,21 @@ export const CartControls = ({
     onAddToCart,
     onAddQuantity,
     onRemoveQuantity,
-}: CartControlsProps) => (
-    <div className="space-y-6 px-4 flex-shrink-0 mt-auto h-[83px]">
+}: CartControlsProps) => {
+    const [tonConnectUI] = useTonConnectUI();
+    const [show, setShow] = useState(false)
+
+    const handelbutton = () => {
+        if (tonConnectUI.account) {
+            setShow(true)
+        }
+    }
+
+    return (<div className="space-y-6 px-4 flex-shrink-0 mt-auto h-[83px]">
+        {show && <SuccessPayment  setShow={setShow} />
+        }
         <div className="flex gap-2">
+
             {product.left === 0 ? (
                 <Button className="flex items-center w-full gap-2">
                     <NotificationIcon />
@@ -76,9 +91,10 @@ export const CartControls = ({
                         )}
                     </Button>
 
-                    <Button className="flex-1">Buy now</Button>
+                    <Button onClick={handelbutton} className="flex-1">Buy now <TonConnectButton className="w-full absolute opacity-0" /></Button>
                 </>
             )}
         </div>
     </div>
-);
+    );
+}

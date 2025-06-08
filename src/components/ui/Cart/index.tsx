@@ -37,7 +37,7 @@ export default function Cart() {
                     </DrawerClose>
                     <div className="w-full flex gap-2 flex-col">
                         {items.length === 0 ? (
-                            <div className="w-full flex gap-2 flex-col justify-center items-center py-8">
+                            <div className="w-full flex  h-[200px] gap-2 flex-col justify-center items-center py-8">
                                 <DrawerTitle>Cart's cold</DrawerTitle>
                                 <DrawerDescription>No items yet</DrawerDescription>
                             </div>
