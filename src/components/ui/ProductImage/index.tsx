@@ -1,9 +1,11 @@
 import { cn } from "@/lib/ui";
 import type { ProductImageProps } from "@/types/Product";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useState, } from "react";
+import { Carousel, CarouselContent, CarouselItem } from "../Swiper";
 
-export const ProductImage = ({ mainImage, product, onThumbnailClick }: ProductImageProps) => {
+
+export const ProductImage = ({ mainImage, id, product, onThumbnailClick }: ProductImageProps) => {
     const [selectedSize, setSelectedSize] = useState<string | null>("M");
 
     const sizes = ["S", "M", "L", "XL"];
@@ -19,19 +21,19 @@ export const ProductImage = ({ mainImage, product, onThumbnailClick }: ProductIm
             },
         },
     };
-    const itemVariants = {
-        hidden: { opacity: 0, y: 5 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                type: "spring",
-                stiffness: 300,
-                damping: 24,
-            },
-        },
-        
-    };
+    // const itemVariants = {
+    //     hidden: { opacity: 0, y: 5 },
+    //     visible: {
+    //         opacity: 1,
+    //         y: 0,
+    //         transition: {
+    //             type: "spring",
+    //             stiffness: 300,
+    //             damping: 24,
+    //         },
+    //     },
+
+    // };
 
     return (
         <div className="flex-grow flex flex-col space-y-2 overflow-y-auto">
@@ -45,12 +47,14 @@ export const ProductImage = ({ mainImage, product, onThumbnailClick }: ProductIm
                     className="w-full rounded-[20px] relative px-4 overflow-hidden flex-grow"
                 >
                     {mainImage ? (
-                        <img
-                            width="1500"
-                            src={mainImage}
-                            alt={product.name}
-                            className="w-full h-full object-cover rounded-[20px]"
-                        />
+                        <picture style={{ viewTransitionName: product.name + product.images[0], contain: "layout" }}>
+                            <img
+                                width="1500"
+                                src={mainImage}
+                                alt={product.name}
+                                className="w-full h-full object-cover rounded-[20px]"
+                            />
+                        </picture>
                     ) : (
                         <div className="w-full h-full bg-gray-200 dark:bg-white/10 rounded-[20px]" />
                     )}
@@ -89,28 +93,57 @@ export const ProductImage = ({ mainImage, product, onThumbnailClick }: ProductIm
                     initial="hidden"
                     animate="visible"
                 >
-                    {product.images.map((image, idx) => (
-                        <motion.div
-                            key={idx}
-                            className={cn(
-                                "w-20 h-20 flex-shrink-0 !no-scrollbar  rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ease-in",
-                                mainImage === image
-                                    ? "border-black dark:border-white"
-                                    : "border-transparent"
+
+                    <Carousel opts={{
+                        align: "start",
+                        startIndex: id - 1
+                    }} className="w-full max-w-sm"
+                    >
+                        <CarouselContent className="-ml-1">
+                            {product.images.map((image, idx) =>
+                                <CarouselItem key={idx} onClick={() => onThumbnailClick(image)}
+                                    className={cn(
+                                        "pl-2  basis-1/4",
+
+                                    )}>
+
+                                    <img
+                                        src={image}
+                                        width={80} height={80}
+                                        alt={`${product.name} ${idx + 1}`}
+                                        className={cn("w-20  rounded-xl h-20 bg-amber-50 duration-150 object-cover", mainImage === image
+                                            ? "border-black border-2 dark:border-white"
+                                            : "border-transparent ")}
+                                    />
+                                </CarouselItem>
                             )}
-                            onClick={() => onThumbnailClick(image)}
-                            variants={itemVariants}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
-                            layout
-                        >
-                            <img
-                                src={image}
-                                alt={`${product.name} ${idx + 1}`}
-                                className="w-full h-full object-cover"
-                            />
-                        </motion.div>
-                    ))}
+
+                        </CarouselContent>
+                    </Carousel>
+
+
+                    {/*  {product.images.map((image, idx) => (
+                            <motion.div
+                                key={idx}
+                                className={cn(
+                                    "w-20 h-20 flex-shrink-0 !no-scrollbar  rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ease-in",
+                                    mainImage === image
+                                        ? "border-black dark:border-white"
+                                        : "border-transparent"
+                                )}
+                                onClick={() => onThumbnailClick(image)}
+                                variants={itemVariants}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                layout
+                            >
+                                <img
+                                    src={image}
+                                    alt={`${product.name} ${idx + 1}`}
+                                    className="w-full h-full object-cover"
+                                />
+                            </motion.div>
+                        ))} */}
                 </motion.div>
             )}
 

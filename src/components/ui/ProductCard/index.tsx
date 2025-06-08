@@ -4,12 +4,21 @@ import { motion } from "motion/react";
 import { useNavigate } from "react-router";
 import Carousel from "../Carousel";
 import { memo } from "react";
+import { flushSync } from "react-dom";
 
 export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded }: ProductCardProps) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate(`/product/${product.id}`);
+        if (!document.startViewTransition) {
+            navigate(`/product/${product.id}`);
+        } else {
+            document.startViewTransition(() => {
+                flushSync(() => {
+                    navigate(`/product/${product.id}`);
+                });
+            });
+        }
     };
 
     const renderPrice = () => {
@@ -58,14 +67,16 @@ export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded
                             {!isImageLoaded && (
                                 <div className="absolute inset-0 rounded-2xl bg-gray-200 dark:bg-white/10 animate-pulse" />
                             )}
-                            <img
-                                className={`rounded-2xl  !aspect-square object-cover ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                                width="1500"
-                                src={url}
-                                alt={`${product.name} ${idx + 1}`}
-                                onLoad={() => onImageLoad(product.id)}
-                                loading="lazy"
-                            />
+                            <picture key={product.name + idx} style={{ viewTransitionName: product.name+ product.images[0], contain: "layout" }}>
+                                <img
+                                    className={`rounded-2xl !aspect-square object-cover ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                                    width="1500"
+                                    src={url}
+                                    alt={`${product.name} ${idx + 1}`}
+                                    onLoad={() => onImageLoad(product.id)}
+                                    loading="lazy"
+                                />
+                            </picture>
                         </motion.div>
                     ))
                 ) : [

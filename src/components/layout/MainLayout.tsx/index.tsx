@@ -16,9 +16,9 @@ export default function MainLayout() {
     }, [])
 
     return (
-        <>
+        <div className=''>
             <Outlet />
             <BottomNavigation />
-        </>
+        </div>
     )
 }

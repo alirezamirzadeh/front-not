@@ -29,6 +29,7 @@ export type ProductImageProps ={
     mainImage: string | undefined;
     product: Product;
     onThumbnailClick: (image: string) => void;
+    id: number
 }
 
 

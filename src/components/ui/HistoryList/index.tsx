@@ -25,7 +25,7 @@ export function HistoryList({ history, products, visibleItems }: HistoryListProp
             variants={listVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-2"
+            className="space-y-2 "
         >
             <AnimatePresence mode="popLayout">
                 {history.slice(0, visibleItems).map((item) => {

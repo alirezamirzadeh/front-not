@@ -1,11 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router'
 
 import MainLayout from './components/layout/MainLayout.tsx'
-import { Suspense, lazy } from 'react';
+import { Suspense } from 'react';
 import LoadingMount from './components/ui/LoadingMount/index.tsx';
-const HomePage = lazy(() => import('./pages/HomePage'));
-const AccountPage = lazy(() => import('./pages/AccountPage'));
-const ProductPage = lazy(() => import('./pages/ProductPage'));
+import HomePage  from './pages/HomePage'
+import AccountPage  from './pages/AccountPage'
+import ProductPage  from './pages/ProductPage'
 
 export default function RoutesConfig() {
     return (

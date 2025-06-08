@@ -64,8 +64,8 @@ export default function Carousel({
                 <AnimatePresence mode="wait">
                     <motion.div
                         key={curr}
-                        initial={{ opacity: 1, scale: 1.5 }}
-                        animate={{ opacity: 1, scale: 1, x: 0 }}
+                        initial={{ opacity: 1 }}
+                        animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0.8, scale: 0.95, x: (touchStart && touchEnd) ? (touchStart - touchEnd > 0 ? -50 : 50) : 0 }}
                         transition={{ duration: 0.4 }}
                         className="w-full"

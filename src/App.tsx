@@ -1,37 +1,24 @@
-// src/App.tsx
+// src/components/App.tsx
 
-import { useEffect } from "react";
-import RoutesConfig from "./routes";
-import { backButton, miniApp, themeParams, useSignal } from "@telegram-apps/sdk-react";
-import {  TonConnectUIProvider } from '@tonconnect/ui-react';
+import { useEffect } from 'react';
+import { TonConnectUIProvider } from '@tonconnect/ui-react';
+import { useTheme } from './hooks/useTheme';
+import { initTelegram } from './lib/initTelegram';
+import RoutesConfig from './routes';
 
-function App() {
-  const isDark = useSignal(themeParams.isDark);
 
+const App = () => {
+  useTheme();
 
   useEffect(() => {
-    backButton.mount();
+    initTelegram();
+  }, []);
 
-    if (isDark) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-
-    if (miniApp.setHeaderColor.isAvailable()) {
-      try {
-        miniApp.setHeaderColor(isDark ? "#000000" : "#ffffff");
-      } catch {
-        miniApp.setHeaderColor(isDark ? "#ffffff" : "#000000");
-      }
-    }
-
-  }, [isDark]);
-
-  return (<TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/"
-  
-  > <RoutesConfig />
-  </TonConnectUIProvider>)
-}
+  return (
+    <TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/">
+      <RoutesConfig />
+    </TonConnectUIProvider>
+  );
+};
 
 export default App;

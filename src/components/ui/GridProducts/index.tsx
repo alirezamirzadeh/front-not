@@ -17,9 +17,11 @@ export default function GridProducts({ products }: { products: Product[] }) {
         new Set(cartItems.map(item => item.id)),
         [cartItems]
     );
+    console.log("Grid");
+
 
     return (
-        <div className="grid grid-cols-2 gap-4 px-4 mt-1 mb-20">
+        <div className="grid grid-cols-2 gap-4 px-4 mt-1 mb-20 pb-safe">
             <AnimatePresence mode="popLayout">
                 {products.map((product) => (
                     <ProductCard

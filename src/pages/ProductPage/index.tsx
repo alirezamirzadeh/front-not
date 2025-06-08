@@ -30,20 +30,20 @@ export default function ProductPage() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        backButton.show();  
+        backButton.show();
         const offClick = backButton.onClick(() => {
-          navigate("/");    
+            navigate("/");
         });
-    
+
         return () => {
-          offClick();        
-          backButton.hide(); 
+            offClick();
+            backButton.hide();
         };
-      }, [navigate]);
+    }, [navigate]);
 
     useEffect(() => {
         if (product && product.images && product.images.length > 0) {
-            setMainImage(product.images[0]);
+            setMainImage(product.images[Number(id) - 1 || 0]);
         } else {
             setMainImage(undefined);
         }
@@ -95,9 +95,10 @@ export default function ProductPage() {
     };
 
     return (
-        <div className="container mx-auto h-screen overflow-y-hidden flex flex-col">
+        <div className="container  pt-[90px] mx-auto h-screen overflow-y-hidden flex flex-col">
             <ProductInfo product={product} />
             <ProductImage
+                id={Number(id)}
                 mainImage={mainImage}
                 product={product}
                 onThumbnailClick={setMainImage}

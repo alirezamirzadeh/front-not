@@ -1,22 +1,34 @@
-import { lazy, useEffect, useState, Suspense } from "react";
+import { useEffect, useState, Suspense, useCallback } from "react";
 import { useProductsStore } from "@/store/productsStore";
 import SkeletonProducts from "@/components/ui/SkeletonProducts";
 import NotFoundProducts from "@/components/ui/NotFoundProducts";
 import GridProducts from "@/components/ui/GridProducts";
 import { motion } from 'framer-motion';
-
-const SearchOverlay = lazy(() => import('@/components/ui/Search'));
-const Header = lazy(() => import('@/components/layout/Header'));
+import Header from '@/components/layout/Header'
+import SearchOverlay from '@/components/ui/Search'
 
 export default function HomePage() {
     const [isSearching, setIsSearching] = useState(false);
-    const { loading, error, fetchProducts, getFilteredProducts, setSearchText, filters } = useProductsStore();
+
+    const loading = useProductsStore(state => state.loading);
+    const error = useProductsStore(state => state.error);
+    const filters = useProductsStore(state => state.filters);
+    const getFilteredProducts = useProductsStore(state => state.getFilteredProducts);
+    const setSearchText = useProductsStore(state => state.setSearchText);
+     const fetchProducts = useProductsStore(state => state.fetchProducts);
+
+    const fetchProductsCallback = useCallback(() => {
+        fetchProducts();
+       
+
+    }, []);
 
     useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+        fetchProductsCallback();
+    }, []);
 
     const filteredProducts = getFilteredProducts();
+    console.log("Home");
 
     return (
         <motion.div

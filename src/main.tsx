@@ -4,19 +4,20 @@ import App from "./App";
 import {
   bindThemeParamsCssVars,
   init as initSDK,
-
   mountMiniAppSync,
-
   themeParams
 } from "@telegram-apps/sdk-react";
 import "./index.css"
+
+
 initSDK();
 themeParams.mountSync()
 bindThemeParamsCssVars()
 if (mountMiniAppSync.isAvailable()) {
-  mountMiniAppSync();                       
+  mountMiniAppSync();
 }
 if (themeParams.mountSync.isAvailable()) {
-  themeParams.mountSync();                 
+  themeParams.mountSync();
 }
+
 ReactDOM.createRoot(document.getElementById("root")!).render(<App />);

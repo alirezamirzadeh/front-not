@@ -45,33 +45,36 @@ export default function AccountPage() {
 
   return (
     <motion.div
-      className="px-4 pb-[83px] w-screen min-h-screen overflow-y-auto flex flex-col"
+      className="px-4 pb-[83px] relative w-screen min-h-screen flex flex-col"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
-      <Profile />
+      <div className="sticky top-0 pt-20 bg-white dark:bg-black z-10">
+        <Profile />
+        <h2 className="mt-6 mb-4 text-xl font-semibold">History</h2>
+      </div>
 
-      <h2 className="mt-6 mb-4 text-xl font-semibold">History</h2>
+      <div className="flex-1 overflow-y-auto">
+        {loading && visibleCount === ITEMS_PER_PAGE ? (
+          <HistorySkeleton />
+        ) : error ? (
+          <ErrorMessage message={error} />
+        ) : history.length === 0 ? (
+          <EmptyHistory />
+        ) : (
+          <HistoryList
+            history={history}
+            products={products}
+            visibleItems={visibleCount}
+          />
+        )}
 
-      {loading && visibleCount === ITEMS_PER_PAGE ? (
-        <HistorySkeleton />
-      ) : error ? (
-        <ErrorMessage message={error} />
-      ) : history.length === 0 ? (
-        <EmptyHistory />
-      ) : (
-        <HistoryList
-          history={history}
-          products={products}
-          visibleItems={visibleCount}
-        />
-      )}
-
-      {visibleCount < history.length && history.length !==0 &&(
-        <LoadingMore ref={sentinelRef} isLoading={isLoadingMore} />
-      )}
+        {visibleCount < history.length && history.length !== 0 && (
+          <LoadingMore ref={sentinelRef} isLoading={isLoadingMore} />
+        )}
+      </div>
     </motion.div>
   );
 }
