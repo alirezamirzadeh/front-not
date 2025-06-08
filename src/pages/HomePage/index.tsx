@@ -1,41 +1,27 @@
-import { useEffect, useState, Suspense, useCallback } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useProductsStore } from "@/store/productsStore";
 import SkeletonProducts from "@/components/ui/SkeletonProducts";
 import NotFoundProducts from "@/components/ui/NotFoundProducts";
 import GridProducts from "@/components/ui/GridProducts";
+import Header from '@/components/layout/Header';
+import SearchOverlay from '@/components/ui/Search';
 import { motion } from 'framer-motion';
-import Header from '@/components/layout/Header'
-import SearchOverlay from '@/components/ui/Search'
 
 export default function HomePage() {
     const [isSearching, setIsSearching] = useState(false);
-
-    const loading = useProductsStore(state => state.loading);
-    const error = useProductsStore(state => state.error);
-    const filters = useProductsStore(state => state.filters);
-    const getFilteredProducts = useProductsStore(state => state.getFilteredProducts);
-    const setSearchText = useProductsStore(state => state.setSearchText);
-     const fetchProducts = useProductsStore(state => state.fetchProducts);
-
-    const fetchProductsCallback = useCallback(() => {
-        fetchProducts();
-       
-
-    }, []);
+    const { loading, error, fetchProducts, getFilteredProducts, setSearchText, filters } = useProductsStore();
+    const filteredProducts = getFilteredProducts();
 
     useEffect(() => {
-        fetchProductsCallback();
-    }, []);
-
-    const filteredProducts = getFilteredProducts();
-    console.log("Home");
+        fetchProducts();
+    }, [fetchProducts]);
 
     return (
         <motion.div
             initial={{ opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.1, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
         >
             <Suspense fallback={null}>
                 <SearchOverlay

@@ -52,7 +52,7 @@ export default function FilterProducts() {
                                     <motion.div
                                         key={category}
                                         onClick={() => toggleTempCategory(category)}
-                                        className={cn(tempFilters.categories.includes(category) ? "bg-black text-white dark:bg-white dark:text-blac" : " bg-black/8 dark:bg-white/8", "flex-1 rounded-lg p-2 cursor-pointer ")}
+                                        className={cn(tempFilters.categories.includes(category) ? "bg-black text-white dark:bg-white dark:text-black" : " bg-black/8 dark:bg-white/8", "flex-1 rounded-lg p-2 cursor-pointer ")}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                     >

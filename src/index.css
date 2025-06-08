@@ -63,7 +63,7 @@ body {
   overflow-x: hidden;
   color: black;
   background-color: #fff;
-  
+
 }
 
 
@@ -82,13 +82,17 @@ body {
 @utility no-scrollbar {
   @apply [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
   --animate-wiggle: wiggle 1s ease-in-out infinite;
+
   @keyframes wiggle {
-    75%, 100% {
+
+    75%,
+    100% {
       transform: scale(1.5);
       opacity: 0;
     }
   }
 }
+
 .carousel {
   display: block;
   height: 100px;
@@ -113,4 +117,118 @@ body {
   display: flex;
   justify-content: center;
   width: 100%;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slide-from-right {
+  from {
+    transform: translateX(30px);
+  }
+}
+
+@keyframes slide-to-left {
+  to {
+    transform: translateX(-30px);
+  }
+}
+
+::view-transition-old(root) {
+  animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
+}
+
+::view-transition-new(root) {
+  animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) 90ms both fade-in,
+    300ms cubic-bezier(0.4, 0, 0.2, 1) 90ms both slide-from-right;
+}
+
+::view-transition-image-pair(root) {
+  isolation: auto;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+/* Product image transitions */
+::view-transition-old(product-image-*),
+::view-transition-new(product-image-*) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-image-pair(product-image-*) {
+  isolation: auto;
+}
+
+/* Ensure images maintain their aspect ratio during transition */
+::view-transition-old(product-image-*) img,
+::view-transition-new(product-image-*) img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+::view-transition-old(product-image-1) {
+  animation: fade-out 0.3s forwards;
+}
+
+::view-transition-new(product-image-1) {
+  animation: fade-in 0.3s forwards;
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* Bottom navigation transitions */
+::view-transition-old(bottom-nav),
+::view-transition-new(bottom-nav) {
+  animation: none;
+  mix-blend-mode: normal;
+  display: block;
+}
+
+::view-transition-image-pair(bottom-nav) {
+  isolation: auto;
+}
+
+/* Ensure the bottom nav stays visible during transitions */
+::view-transition-old(bottom-nav) {
+  animation: fade-out 0.3s forwards;
+}
+
+::view-transition-new(bottom-nav) {
+  animation: fade-in 0.3s forwards;
 }

@@ -1,24 +1,23 @@
 import TickIcon from "@/components/icon/TickIcon";
 import type { ProductCardProps } from "@/types/Product";
 import { motion } from "motion/react";
-import { useNavigate } from "react-router";
 import Carousel from "../Carousel";
 import { memo } from "react";
-import { flushSync } from "react-dom";
+import { useViewTransition } from "@/hooks/useViewTransition";
+import { useProductsStore } from "@/store/productsStore";
 
 export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded }: ProductCardProps) => {
-    const navigate = useNavigate();
+    const navigateWithTransition = useViewTransition();
+    const getSelectedImageIndex = useProductsStore(state => state.getSelectedImageIndex);
+    const setSelectedImageIndex = useProductsStore(state => state.setSelectedImageIndex);
+    const selectedIndex = getSelectedImageIndex(product.id);
 
     const handleClick = () => {
-        if (!document.startViewTransition) {
-            navigate(`/product/${product.id}`);
-        } else {
-            document.startViewTransition(() => {
-                flushSync(() => {
-                    navigate(`/product/${product.id}`);
-                });
-            });
-        }
+        navigateWithTransition(`/product/${product.id}`);
+    };
+
+    const handleSlideChange = (index: number) => {
+        setSelectedImageIndex(product.id, index);
     };
 
     const renderPrice = () => {
@@ -53,7 +52,11 @@ export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded
                     {product.id === 2 ? "10%" : "15%"}
                 </div>
             )}
-            <Carousel id={Number(product.id)}>
+            <Carousel
+                id={Number(product.id)}
+                startIndex={selectedIndex}
+                onSlideChange={handleSlideChange}
+            >
                 {product.images.length > 0 ? (
                     product.images.map((url, idx) => (
                         <motion.div
@@ -67,7 +70,13 @@ export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded
                             {!isImageLoaded && (
                                 <div className="absolute inset-0 rounded-2xl bg-gray-200 dark:bg-white/10 animate-pulse" />
                             )}
-                            <picture key={product.name + idx} style={{ viewTransitionName: product.name+ product.images[0], contain: "layout" }}>
+                            <div
+                                className="w-full h-full rounded-2xl overflow-hidden"
+                               
+                            >
+                                <picture  style={{
+                                    viewTransitionName: `product-image-${product.id}`
+                                }}>
                                 <img
                                     className={`rounded-2xl !aspect-square object-cover ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
                                     width="1500"
@@ -76,7 +85,8 @@ export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded
                                     onLoad={() => onImageLoad(product.id)}
                                     loading="lazy"
                                 />
-                            </picture>
+                                </picture>
+                            </div>
                         </motion.div>
                     ))
                 ) : [

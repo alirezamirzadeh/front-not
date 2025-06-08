@@ -12,16 +12,13 @@ export default function GridProducts({ products }: { products: Product[] }) {
         setLoadedImages(prev => ({ ...prev, [productId]: true }));
     };
 
-    // Memoize cart items check to prevent unnecessary re-renders
     const cartItemIds = useMemo(() =>
         new Set(cartItems.map(item => item.id)),
         [cartItems]
     );
-    console.log("Grid");
-
 
     return (
-        <div className="grid grid-cols-2 gap-4 px-4 mt-1 mb-20 pb-safe">
+        <div className="grid grid-cols-2 gap-4 px-4 pb-20" style={{ viewTransitionName: 'product-grid' }}>
             <AnimatePresence mode="popLayout">
                 {products.map((product) => (
                     <ProductCard

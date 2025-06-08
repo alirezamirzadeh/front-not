@@ -1,14 +1,24 @@
 import { cn } from "@/lib/ui";
 import type { ProductImageProps } from "@/types/Product";
 import { AnimatePresence, motion } from "motion/react";
-import { useState, } from "react";
+import { useState, useCallback } from "react";
 import { Carousel, CarouselContent, CarouselItem } from "../Swiper";
-
+import { useProductsStore } from "@/store/productsStore";
 
 export const ProductImage = ({ mainImage, id, product, onThumbnailClick }: ProductImageProps) => {
     const [selectedSize, setSelectedSize] = useState<string | null>("M");
+    const setSelectedImageIndex = useProductsStore(state => state.setSelectedImageIndex);
+    const getSelectedImageIndex = useProductsStore(state => state.getSelectedImageIndex);
 
     const sizes = ["S", "M", "L", "XL"];
+
+    const handleThumbnailClick = useCallback((image: string) => {
+        const index = product.images.indexOf(image);
+        if (index !== -1) {
+            setSelectedImageIndex(product.id, index);
+            onThumbnailClick(image);
+        }
+    }, [product.id, product.images, setSelectedImageIndex, onThumbnailClick]);
 
     const containerVariants = {
         hidden: { opacity: 0, x: -50 },
@@ -47,14 +57,21 @@ export const ProductImage = ({ mainImage, id, product, onThumbnailClick }: Produ
                     className="w-full rounded-[20px] relative px-4 overflow-hidden flex-grow"
                 >
                     {mainImage ? (
-                        <picture style={{ viewTransitionName: product.name + product.images[0], contain: "layout" }}>
+                        <div
+                            className="w-full h-full rounded-[20px] overflow-hidden"
+                            
+                        >
+                            <picture style={{
+                                viewTransitionName: `product-image-${id}`
+                            }}>
                             <img
                                 width="1500"
                                 src={mainImage}
                                 alt={product.name}
                                 className="w-full h-full object-cover rounded-[20px]"
                             />
-                        </picture>
+                            </picture>
+                        </div>
                     ) : (
                         <div className="w-full h-full bg-gray-200 dark:bg-white/10 rounded-[20px]" />
                     )}
@@ -86,43 +103,40 @@ export const ProductImage = ({ mainImage, id, product, onThumbnailClick }: Produ
                 </motion.div>
             </AnimatePresence>
 
-            {product.images && product.images.length > 0 && (
-                <motion.div
-                    className="flex  snap-x snap-mandatory space-x-2 ml-4 pr-4 !no-scrollbar overflow-x-auto pb-2 flex-shrink-0"
-                    variants={containerVariants}
-                    initial="hidden"
-                    animate="visible"
-                >
-
-                    <Carousel opts={{
-                        align: "start",
-                        startIndex: id - 1
-                    }} className="w-full max-w-sm"
+            {
+                product.images && product.images.length > 0 && (
+                    <motion.div
+                        className="flex  snap-x snap-mandatory space-x-2 ml-4 pr-4 !no-scrollbar overflow-x-auto pb-2 flex-shrink-0"
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
                     >
-                        <CarouselContent className="-ml-1">
-                            {product.images.map((image, idx) =>
-                                <CarouselItem key={idx} onClick={() => onThumbnailClick(image)}
-                                    className={cn(
-                                        "pl-2  basis-1/4",
+                        <Carousel opts={{
+                            align: "start",
+                            startIndex: getSelectedImageIndex(product.id)
+                        }} className="w-full max-w-sm"
+                        >
+                            <CarouselContent className="-ml-1">
+                                {product.images.map((image, idx) =>
+                                    <CarouselItem key={idx} onClick={() => handleThumbnailClick(image)}
+                                        className={cn(
+                                            "pl-2  basis-1/4",
+                                        )}>
+                                        <img
+                                            src={image}
+                                            width={80} height={80}
+                                            alt={`${product.name} ${idx + 1}`}
+                                            className={cn("w-20  rounded-xl h-20 bg-amber-50 duration-150 object-cover", mainImage === image
+                                                ? "border-black border-2 dark:border-white"
+                                                : "border-transparent ")}
+                                        />
+                                    </CarouselItem>
+                                )}
+                            </CarouselContent>
+                        </Carousel>
 
-                                    )}>
 
-                                    <img
-                                        src={image}
-                                        width={80} height={80}
-                                        alt={`${product.name} ${idx + 1}`}
-                                        className={cn("w-20  rounded-xl h-20 bg-amber-50 duration-150 object-cover", mainImage === image
-                                            ? "border-black border-2 dark:border-white"
-                                            : "border-transparent ")}
-                                    />
-                                </CarouselItem>
-                            )}
-
-                        </CarouselContent>
-                    </Carousel>
-
-
-                    {/*  {product.images.map((image, idx) => (
+                        {/*  {product.images.map((image, idx) => (
                             <motion.div
                                 key={idx}
                                 className={cn(
@@ -144,9 +158,10 @@ export const ProductImage = ({ mainImage, id, product, onThumbnailClick }: Produ
                                 />
                             </motion.div>
                         ))} */}
-                </motion.div>
-            )}
+                    </motion.div>
+                )
+            }
 
-        </div>
+        </div >
     );
 };

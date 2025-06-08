@@ -6,25 +6,32 @@ export default function Carousel({
     children: slides,
     autoSlide = false,
     autoSlideInterval = 3000,
-    id
+    id,
+    startIndex = 0,
+    onSlideChange
 }: {
     children: React.ReactNode[];
     autoSlide?: boolean;
     autoSlideInterval?: number;
-    id: number
+    id: number;
+    startIndex?: number;
+    onSlideChange?: (index: number) => void;
 }) {
-    const [curr, setCurr] = useState(id - 1)
- // const [curr, setCurr] = useState(slides.length / 2)
+    const [curr, setCurr] = useState(startIndex)
 
     const [touchStart, setTouchStart] = useState<number | null>(null)
     const [touchEnd, setTouchEnd] = useState<number | null>(null)
 
     const prev = () => {
-        setCurr((curr) => (curr === 0 ? slides.length - 1 : curr - 1))
+        const newIndex = curr === 0 ? slides.length - 1 : curr - 1;
+        setCurr(newIndex);
+        onSlideChange?.(newIndex);
     }
 
     const next = () => {
-        setCurr((curr) => (curr === slides.length - 1 ? 0 : curr + 1))
+        const newIndex = curr === slides.length - 1 ? 0 : curr + 1;
+        setCurr(newIndex);
+        onSlideChange?.(newIndex);
     }
 
     useEffect(() => {
@@ -57,6 +64,8 @@ export default function Carousel({
         setTouchStart(null)
         setTouchEnd(null)
     }
+    console.log(id);
+    
 
     return (
         <div className="overflow-hidden relative w-full rounded-2xl">

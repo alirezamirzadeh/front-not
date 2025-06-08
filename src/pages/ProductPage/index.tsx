@@ -1,6 +1,7 @@
 import { useParams } from "react-router";
 import { useCartStore } from "@/store/cartStore";
 import { useProductsStore } from "@/store/productsStore";
+import { motion } from 'framer-motion';
 
 import { useEffect, useState } from "react";
 import NotFoundProducts from "@/components/ui/NotFoundProducts";
@@ -11,13 +12,15 @@ import { CartControls } from "@/components/ui/CartControls";
 import { LoadingSkeletonSingleProduct } from "@/components/ui/LoadingSkeletonSingleProduct";
 
 import { backButton } from "@telegram-apps/sdk-react";
-import { useNavigate } from "react-router";
+import { useViewTransition } from "@/hooks/useViewTransition";
 
 export default function ProductPage() {
     const { id } = useParams();
     const products = useProductsStore(state => state.products);
     const loading = useProductsStore(state => state.loading);
     const error = useProductsStore(state => state.error);
+    const getSelectedImageIndex = useProductsStore(state => state.getSelectedImageIndex);
+    const navigateWithTransition = useViewTransition();
 
     const items = useCartStore(state => state.items);
     const addItem = useCartStore(state => state.addItem);
@@ -27,27 +30,26 @@ export default function ProductPage() {
     const product = products.find(p => p.id.toString() === id);
     const [mainImage, setMainImage] = useState<string | undefined>(undefined);
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         backButton.show();
         const offClick = backButton.onClick(() => {
-            navigate("/");
+            navigateWithTransition("/");
         });
 
         return () => {
             offClick();
             backButton.hide();
         };
-    }, [navigate]);
+    }, [navigateWithTransition]);
 
     useEffect(() => {
         if (product && product.images && product.images.length > 0) {
-            setMainImage(product.images[Number(id) - 1 || 0]);
+            const storedIndex = getSelectedImageIndex(product.id);
+            setMainImage(product.images[storedIndex]);
         } else {
             setMainImage(undefined);
         }
-    }, [product]);
+    }, [product, getSelectedImageIndex]);
 
     if (loading) {
         return <LoadingSkeletonSingleProduct />;
@@ -95,6 +97,12 @@ export default function ProductPage() {
     };
 
     return (
+        <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.8, ease: "easeInOut" }}
+    >
         <div className="container  pt-[90px] mx-auto h-screen overflow-y-hidden flex flex-col">
             <ProductInfo product={product} />
             <ProductImage
@@ -112,5 +120,6 @@ export default function ProductPage() {
                 onRemoveQuantity={handleRemoveCart}
             />
         </div>
+        </motion.div>
     );
 } 
