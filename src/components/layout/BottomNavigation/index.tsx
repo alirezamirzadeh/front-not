@@ -40,7 +40,7 @@ export default function BottomNavigation({isProductPage}: {isProductPage: boolea
         'bg-white dark:bg-black h-[83px] flex px-4 z-[9999] ',
         total > 0 ? 'border-t-0 shadow-xs' : 'border-t-[0.33px] dark:border-white/8 border-black/8',
         isKeyboardOpen ? 'opacity-0' : 'opacity-100',
-        isProductPage ? "opacity-100" : 'opacity-100'
+        isProductPage ? "opacity-100" : 'opacity-0'
     );
 
     return (
