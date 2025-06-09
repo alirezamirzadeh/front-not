@@ -20,7 +20,8 @@ export default function MainLayout() {
             }
         }
     }, [startParam, navigate])
-
+    console.log("MainLayout");
+    
     return (
         <div className=''>
             <Outlet />

@@ -40,6 +40,9 @@ export default function BottomNavigation({ isProductPage }: { isProductPage: boo
         isProductPage ? "opacity-0" : 'opacity-100'
     );
 
+    console.log("BottomNavigation");
+    
+
     return (
         <div
             className={containerClasses}

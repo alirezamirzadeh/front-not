@@ -10,10 +10,12 @@ import RoutesConfig from './routes';
 const App = () => {
   useTheme();
   
+  
 
   useEffect(() => {
     initTelegram();
   }, []);
+console.log("App");
 
   return (
     <TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/">

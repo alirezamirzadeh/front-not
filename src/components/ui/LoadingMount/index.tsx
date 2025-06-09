@@ -6,7 +6,7 @@ import type { Variants } from "motion/react"
 function LoadingMount() {
     const dotVariants: Variants = {
         jump: {
-            y: -30,
+            y: -20,
             transition: {
                 duration: 0.8,
                 repeat: Infinity,
@@ -15,12 +15,13 @@ function LoadingMount() {
             },
         },
     }
+    console.log("LoadingMount");
 
 
     return (
         <div className="h-screen flex gap-8 flex-col justify-center items-center w-full">
-            <motion.div initial={{opacity: 0.2,y:10}} animate={{opacity:1, y:0}}
-            transition={{duration:0.2}} className="flex -translate-y-20 flex-col items-center animate-pulse ">
+            <motion.div initial={{ opacity: 0.2, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2 }} className="flex -translate-y-20 flex-col items-center animate-pulse ">
                 <CartIcon className="w-24 h-24" />
                 <p className="text-main">Not Store</p>
             </motion.div>
@@ -32,7 +33,7 @@ function LoadingMount() {
                 <motion.div className="w-5 h-5 rounded-full bg-black dark:bg-white will-change-transform" variants={dotVariants} />
                 <motion.div className="w-5 h-5 rounded-full bg-black dark:bg-white will-change-transform" variants={dotVariants} />
                 <motion.div className="w-5 h-5 rounded-full bg-black dark:bg-white will-change-transform" variants={dotVariants} />
-                
+
             </motion.div>
         </div>
     )

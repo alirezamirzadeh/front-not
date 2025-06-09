@@ -24,10 +24,10 @@ interface HistoryListProps {
 export function HistoryList({ history, products }: HistoryListProps) {
 
 
-    
+
     const Row = ({ index, style }: ListChildComponentProps) => (
-        <div className='' style={style}>
-            <HistoryItemCard key={index}
+        <div key={index} style={style}>
+            <HistoryItemCard 
                 item={history[index]}
                 product={products.find((p) => p.id === history[index].id)} />
         </div>
