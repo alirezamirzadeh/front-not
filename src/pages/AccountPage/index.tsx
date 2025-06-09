@@ -32,7 +32,7 @@ export default function AccountPage() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: 'easeInOut' }}
     >
-      <div className="sticky top-0 pt-20 bg-white dark:bg-black z-10">
+      <div className="sticky top-0  bg-white dark:bg-black z-10">
         <Profile />
         <h2 className="mt-6 mb-4 text-xl font-semibold">History</h2>
       </div>

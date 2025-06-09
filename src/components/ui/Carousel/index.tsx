@@ -64,7 +64,6 @@ export default function Carousel({
         setTouchStart(null)
         setTouchEnd(null)
     }
-    console.log(id);
     
 
     return (
