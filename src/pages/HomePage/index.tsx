@@ -22,6 +22,7 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-y-scroll overscroll-y-contain h-[calc(100vh-20px)]"
         >
             <Suspense fallback={null}>
                 <SearchOverlay

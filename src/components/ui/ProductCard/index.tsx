@@ -39,7 +39,7 @@ export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="rounded-lg overflow-hidden cursor-pointer relative"
+            className="rounded-lg  overflow-hidden cursor-pointer relative"
         >
             {isInCart && (
                 <div className="absolute top-2 right-2 z-10 h-[22px] w-[22px] flex justify-center items-center bg-black text-white dark:bg-white dark:text-black rounded-full">

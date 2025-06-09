@@ -6,7 +6,7 @@ import autoprefixer from 'autoprefixer';
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    allowedHosts: ['a047-2a09-bac1-1e00-628-00-1d6-111.ngrok-free.app'],
+    allowedHosts: ['39f3-2a09-bac5-a6f5-2464-00-3a0-2d.ngrok-free.app'],
   },
   resolve: {
     alias: {
