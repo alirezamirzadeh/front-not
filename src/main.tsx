@@ -11,6 +11,7 @@ import {
 import "./index.css"
 import { scan } from "react-scan";
 import React from "react";
+import { BrowserRouter } from "react-router";
 
 scan({
   enabled: true,
@@ -20,7 +21,7 @@ initSDK();
 
 if (miniApp.mountSync.isAvailable()) {
   miniApp.mountSync();
-  miniApp.isMounted(); 
+  miniApp.isMounted();
 }
 
 if (miniApp.bindCssVars.isAvailable()) {
@@ -31,5 +32,7 @@ if (miniApp.bindCssVars.isAvailable()) {
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(<React.StrictMode>
-  <App />
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
 </React.StrictMode>);

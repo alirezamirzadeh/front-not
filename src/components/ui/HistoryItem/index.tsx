@@ -21,7 +21,6 @@ const formatDate = (ts: number) => {
 
 
 export function HistoryItemCard({ item, product }: HistoryItemCardProps) {
-    console.log("HistoryItemCard",item);
     
     
     return (

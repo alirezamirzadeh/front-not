@@ -1,10 +1,13 @@
 import { AnimatePresence } from "motion/react";
-import type { Product } from "@/types/Product";
 import { useCartStore } from "@/store/cartStore";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { ProductCard } from "../ProductCard";
+import { useProductsStore } from "@/store/productsStore";
+import SkeletonProducts from "@/components/ui/SkeletonProducts";
+import NotFoundProducts from "@/components/ui/NotFoundProducts";
+import { useShallow } from 'zustand/react/shallow';
 
-export default function GridProducts({ products }: { products: Product[] }) {
+export default function GridProducts() {
     const { items: cartItems } = useCartStore();
     const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({});
 
@@ -17,19 +20,54 @@ export default function GridProducts({ products }: { products: Product[] }) {
         [cartItems]
     );
 
+
+    const {
+        loading,
+        error,
+        getFilteredProducts, fetchProducts } = useProductsStore(
+            useShallow((s) => ({
+                loading: s.loading,
+                error: s.error,
+                fetchProducts: s.fetchProducts,
+                getFilteredProducts: s.getFilteredProducts,
+
+            }))
+        );
+    const filteredProducts = getFilteredProducts();
+
+    useEffect(() => {
+        fetchProducts();
+    }, [fetchProducts]);
+
+    console.log("GridProducts");
+    
+
     return (
-        <div className="grid   grid-cols-2 gap-4 px-4 pb-20" style={{ viewTransitionName: 'product-grid' }}>
-            <AnimatePresence mode="popLayout">
-                {products.map((product) => (
-                    <ProductCard
-                        key={product.id}
-                        product={product}
-                        isInCart={cartItemIds.has(String(product.id))}
-                        onImageLoad={handleImageLoad}
-                        isImageLoaded={loadedImages[product.id] || false}
-                    />
-                ))}
-            </AnimatePresence>
-        </div>
+        <>
+
+            {loading && <SkeletonProducts />}
+
+            {error && (
+                <div className="p-4 text-center text-red-500">Error: {error}</div>
+            )}
+
+            {!loading && !error && (
+                filteredProducts.length <= 0 ?
+                    <NotFoundProducts />
+                    :
+                    <div className="grid   grid-cols-2 gap-4 px-4 pb-20" style={{ viewTransitionName: 'product-grid' }}>
+                        <AnimatePresence mode="popLayout">
+                            {filteredProducts.map((product) => (
+                                <ProductCard
+                                    key={product.id}
+                                    product={product}
+                                    isInCart={cartItemIds.has(String(product.id))}
+                                    onImageLoad={handleImageLoad}
+                                    isImageLoaded={loadedImages[product.id] || false}
+                                />
+                            ))}
+                        </AnimatePresence>
+                    </div>
+            )}</>
     );
 }

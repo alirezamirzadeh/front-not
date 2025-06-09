@@ -9,6 +9,9 @@ export default function Cart() {
     const { items, removeItem } = useCartStore();
     const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
+    console.log("Cart");
+    
+
     return (
         <Drawer>
             <DrawerTrigger>

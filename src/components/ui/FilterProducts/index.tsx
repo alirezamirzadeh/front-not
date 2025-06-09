@@ -4,12 +4,14 @@ import CloseButton from "@/components/ui/CloseButton";
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "@/components/ui/Drawer";
 import { useProductsStore } from "@/store/productsStore";
 import { MultiRangeSlider } from "../MultiRangeSlider";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/ui";
+import { useShallow } from 'zustand/react/shallow';
 
 export default function FilterProducts() {
     const drawerRef = useRef<HTMLButtonElement>(null);
+
     const {
         products,
         tempFilters,
@@ -18,21 +20,32 @@ export default function FilterProducts() {
         getMaxPrice,
         applyFilters,
         resetTempFilters,
-        isFiltering
-    } = useProductsStore()
+        isFiltering } = useProductsStore(
+            useShallow((s) => ({
+                products: s.products,
+                tempFilters: s.tempFilters,
+                setTempPriceRange: s.setTempPriceRange,
+                getMaxPrice: s.getMaxPrice,
+                toggleTempCategory: s.toggleTempCategory,
+                applyFilters: s.applyFilters,
+                resetTempFilters: s.resetTempFilters,
+                isFiltering: s.isFiltering,
+            }))
+        );
+
 
     const categories = products.map(product => product.category).filter((item, index, array) => array.indexOf(item) === index)
     const maxPrice = getMaxPrice()
 
-    // Reset temp filters when drawer opens
     useEffect(() => {
         resetTempFilters()
     }, [])
 
-    const handleApplyFilters = async () => {
-        await applyFilters()
-        drawerRef.current?.click()
-    }
+    const handleApplyFilters = useCallback(async () => {
+        await applyFilters();
+        drawerRef.current?.click();
+      }, [applyFilters]);
+    console.log("FilterProducts");
 
     return (
         <Drawer>

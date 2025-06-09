@@ -13,7 +13,7 @@ export default function AccountPage() {
 
   useEffect(() => {
     backButton.show();
-    const off = backButton.onClick(() => navigate(-1));
+    const off = backButton.onClick(() => navigate("/"));
     return () => {
       off();
       backButton.hide();
@@ -26,7 +26,7 @@ export default function AccountPage() {
 
   return (
     <motion.div
-      className="px-4 pb-[83px] relative overflow-y-scroll overscroll-y-contain h-[calc(100vh-20px)] w-screen min-h-screen flex flex-col"
+      className="px-4 relative overflow-y-scroll overscroll-y-contain h-[calc(100vh-20px)] w-screen min-h-screen flex flex-col"
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}

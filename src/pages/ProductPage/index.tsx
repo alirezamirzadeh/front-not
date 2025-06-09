@@ -109,7 +109,7 @@ export default function ProductPage() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
         >
-            <div className="container  pt-[90px] mx-auto h-screen overflow-y-hidden flex flex-col">
+            <div className="container   mx-auto h-screen overflow-y-hidden flex flex-col">
                 <ProductInfo product={product} />
                 <ProductImage
                     id={Number(id)}
