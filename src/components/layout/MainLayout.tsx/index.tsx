@@ -1,9 +1,8 @@
 import { Outlet, useNavigate, useLocation } from 'react-router'
 import BottomNavigation from '../BottomNavigation'
 import { useLaunchParams } from '@telegram-apps/sdk-react'
-import { useEffect, memo } from 'react'
+import { useEffect } from 'react'
 
-const MemoizedBottomNavigation = memo(BottomNavigation);
 
 export default function MainLayout() {
     const params = useLaunchParams()
@@ -25,7 +24,7 @@ export default function MainLayout() {
     return (
         <div className=''>
             <Outlet />
-            <MemoizedBottomNavigation isProductPage={isProductPage} />
+            {!isProductPage && <BottomNavigation />}
         </div>
     )
 }

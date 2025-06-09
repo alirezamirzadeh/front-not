@@ -4,7 +4,6 @@ import { Suspense, lazy } from 'react';
 import LoadingMount from './components/ui/LoadingMount/index.tsx';
 import { AnimatePresence } from 'motion/react';
 
-// Lazy load pages
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
 const ProductPage = lazy(() => import('./pages/ProductPage'));

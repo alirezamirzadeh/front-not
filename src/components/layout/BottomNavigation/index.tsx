@@ -27,17 +27,16 @@ const NavigationItem = ({ to, icon, label }: {
     </NavLink>
 );
 
-export default function BottomNavigation({ isProductPage }: { isProductPage: boolean }) {
+export default function BottomNavigation() {
     const { items } = useCartStore();
     const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const isKeyboardOpen = useDetectKeyboardOpen();
 
     const containerClasses = cn(
         'fixed bottom-0 left-0 right-0 overflow-hidden',
-        'bg-white dark:bg-black h-[83px] flex px-4 z-[9999] ',
+        'bg-white dark:bg-black h-[83px] flex px-4 z-30 ',
         total > 0 ? 'border-t-0 shadow-xs' : 'border-t-[0.33px] dark:border-white/8 border-black/8',
         isKeyboardOpen ? 'opacity-0' : 'opacity-100',
-        isProductPage ? "opacity-0" : 'opacity-100'
     );
 
     console.log("BottomNavigation");
