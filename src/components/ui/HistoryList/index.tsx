@@ -2,6 +2,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import type { HistoryItem } from '@/store/historyStore';
 import type { Product } from '@/types/Product';
 import { HistoryItemCard } from '../HistoryItem';
+import { FixedSizeList as List } from 'react-window';
+import type { ListChildComponentProps } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 const listVariants = {
     hidden: { opacity: 0 },
@@ -16,28 +19,43 @@ const listVariants = {
 interface HistoryListProps {
     history: HistoryItem[];
     products: Product[];
-    visibleItems: number;
 }
 
-export function HistoryList({ history, products, visibleItems }: HistoryListProps) {
+export function HistoryList({ history, products }: HistoryListProps) {
+
+
+    
+    const Row = ({ index, style }: ListChildComponentProps) => (
+        <div className='' style={style}>
+            <HistoryItemCard key={index}
+                item={history[index]}
+                product={products.find((p) => p.id === history[index].id)} />
+        </div>
+    );
+
+    console.log("HistoryList");
+
     return (
         <motion.ul
             variants={listVariants}
             initial="hidden"
             animate="visible"
-            className="space-y-2 "
+            className=" h-full "
         >
             <AnimatePresence mode="popLayout">
-                {history.slice(0, visibleItems).map((item) => {
-                    const product = products.find((p) => p.id === item.id);
-                    return (
-                        <HistoryItemCard
-                            key={item.timestamp}
-                            item={item}
-                            product={product}
-                        />
-                    );
-                })}
+                <AutoSizer>
+                    {({ width, height }) => (
+                        <List
+                            width={width}
+                            height={height}
+                            itemCount={history.length}
+                            itemSize={70}
+                            className='flex flex-col gap-40'
+                        >
+                            {Row}
+                        </List>
+                    )}
+                </AutoSizer>
             </AnimatePresence>
         </motion.ul>
     );

@@ -2,22 +2,34 @@
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import {
-  bindThemeParamsCssVars,
+  // bindThemeParamsCssVars,
   init as initSDK,
-  mountMiniAppSync,
-  themeParams
+  miniApp,
+  // mountMiniAppSync,
+  // themeParams
 } from "@telegram-apps/sdk-react";
 import "./index.css"
+import { scan } from "react-scan";
+import React from "react";
 
+scan({
+  enabled: true,
+});
 
 initSDK();
-themeParams.mountSync()
-bindThemeParamsCssVars()
-if (mountMiniAppSync.isAvailable()) {
-  mountMiniAppSync();
-}
-if (themeParams.mountSync.isAvailable()) {
-  themeParams.mountSync();
+
+if (miniApp.mountSync.isAvailable()) {
+  miniApp.mountSync();
+  miniApp.isMounted(); 
 }
 
-ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+if (miniApp.bindCssVars.isAvailable()) {
+  miniApp.bindCssVars();
+
+
+  miniApp.isCssVarsBound();
+}
+
+ReactDOM.createRoot(document.getElementById("root")!).render(<React.StrictMode>
+  <App />
+</React.StrictMode>);

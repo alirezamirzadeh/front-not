@@ -11,7 +11,6 @@ export const initTelegram = async () => {
 
   if (await isTMA()) {
     if (viewport.mount.isAvailable()) {
-      await viewport.mount();
       viewport.expand();
     }
 

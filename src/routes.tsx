@@ -12,9 +12,10 @@ const ProductPage = lazy(() => import('./pages/ProductPage'));
 export default function RoutesConfig() {
     return (
         <div className='bg-white text-black dark:bg-black dark:text-white'>
-            <Suspense fallback={<LoadingMount />}>
-                <AnimatePresence mode="wait">
-                    <BrowserRouter>
+            <AnimatePresence mode="wait">
+                <BrowserRouter>
+                    <Suspense fallback={<LoadingMount />}>
+
                         <Routes>
                             <Route path="/" element={<MainLayout />}>
                                 <Route index element={
@@ -34,9 +35,10 @@ export default function RoutesConfig() {
                                 } />
                             </Route>
                         </Routes>
-                    </BrowserRouter>
-                </AnimatePresence>
-            </Suspense>
+                    </Suspense>
+
+                </BrowserRouter>
+            </AnimatePresence>
         </div>
     )
 }

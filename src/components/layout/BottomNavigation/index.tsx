@@ -1,11 +1,10 @@
 import { NavLink } from 'react-router'
-import profile from '/images/profile.png'
 import NotCoin from '../../icon/NotCoinIcon'
 import Button from '@/components/ui/Button';
 import { useCartStore } from '@/store/cartStore';
 import { cn } from '@/lib/ui';
-import { useLaunchParams } from "@telegram-apps/sdk-react";
 import useDetectKeyboardOpen from "use-detect-keyboard-open";
+import Profile from '@/components/ui/Profile';
 
 const NavigationItem = ({ to, icon, label }: {
     to: string;
@@ -28,11 +27,9 @@ const NavigationItem = ({ to, icon, label }: {
     </NavLink>
 );
 
-export default function BottomNavigation({isProductPage}: {isProductPage: boolean}) {
+export default function BottomNavigation({ isProductPage }: { isProductPage: boolean }) {
     const { items } = useCartStore();
     const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const launchParams = useLaunchParams();
-    const user = launchParams.tgWebAppData?.user;
     const isKeyboardOpen = useDetectKeyboardOpen();
 
     const containerClasses = cn(
@@ -61,9 +58,13 @@ export default function BottomNavigation({isProductPage}: {isProductPage: boolea
                     />
                     <NavigationItem
                         to="/account"
-                        icon={<img src={user?.photo_url ?? profile} alt="" className='rounded-full' width={24} height={24} />}
-                        label={user?.first_name ?? "Profile"}
+                        icon={ (<div className='-translate-y-[76px] scale-[47%]'>
+                        <Profile scale={50} />
+                    </div>)}
+                        label={""}
+
                     />
+         
                 </div>
             )}
         </div>

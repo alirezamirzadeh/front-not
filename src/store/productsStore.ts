@@ -1,7 +1,6 @@
 import { fetchGet } from "@/services/apiService";
 import type { ProductsState, Product } from "@/types/Product";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 interface FilterState {
   categories: string[];
@@ -27,7 +26,7 @@ interface ProductsStore extends ProductsState {
 }
 
 export const useProductsStore = create<ProductsStore>()(
-  persist(
+
     (set, get) => ({
       products: [],
       loading: false,
@@ -122,9 +121,9 @@ export const useProductsStore = create<ProductsStore>()(
       },
 
       fetchProducts: async () => {
-        const { products } = get();
+        const { products, loading } = get();
         // If we already have products, don't fetch again
-        if (products.length > 0) {
+        if (loading || products.length > 0) {
           return;
         }
 
@@ -155,8 +154,5 @@ export const useProductsStore = create<ProductsStore>()(
         }
       },
     }),
-    {
-      name: 'products-storage',
-    }
-  )
+
 );

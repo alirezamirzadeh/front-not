@@ -7,31 +7,33 @@ interface HistoryItemCardProps {
     item: HistoryItem;
     product?: Product;
 }
+const formatDate = (ts: number) => {
+    const date = new Date(ts * 1000)
+    const [month, dayWithComma, year] = date
+        .toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'short',
+            year: '2-digit',
+        })
+        .split(' ')
+    return `${dayWithComma.replace(',', '')} ${month}  '${year}`
+}
+
 
 export function HistoryItemCard({ item, product }: HistoryItemCardProps) {
-    const formatDate = (ts: number) => {
-        const date = new Date(ts * 1000)
-        const [month, dayWithComma, year] = date
-            .toLocaleDateString('en-US', {
-                day: 'numeric',
-                month: 'short',
-                year: '2-digit',
-            })
-            .split(' ')
-        return `${dayWithComma.replace(',', '')} ${month}  '${year}`
-    }
-
+    console.log("HistoryItemCard",item);
+    
+    
     return (
 
         <motion.li
-            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ amount: 0.6, once: true }}
+            viewport={{ amount: 0.2, once: true }}
             transition={{ type: 'spring', stiffness: 300, damping: 24 }}
             className="flex items-center gap-3 h-[68px] font-[590]"
         >
             <motion.img
-                src={product?.images?.[item.id -1] ?? '/images/product.png'}
+                src={product?.images?.[item.id - 1] ?? '/images/product.png'}
                 alt={product?.name ?? 'product'}
                 className="w-[60px] h-[60px] rounded-xl object-cover"
                 whileHover={{ scale: 1.05 }}
@@ -51,6 +53,6 @@ export function HistoryItemCard({ item, product }: HistoryItemCardProps) {
                     {item.total.toLocaleString()} {item.currency}
                 </p>
             </div>
-        </motion.li>
+        </motion.li>       
     );
 } 

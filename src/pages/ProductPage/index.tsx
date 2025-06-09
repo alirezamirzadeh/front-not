@@ -13,6 +13,9 @@ import { LoadingSkeletonSingleProduct } from "@/components/ui/LoadingSkeletonSin
 
 import { backButton } from "@telegram-apps/sdk-react";
 import { useViewTransition } from "@/hooks/useViewTransition";
+const preloadComponent = () => {
+    import("@/components/ui/ProductImage");
+};
 
 export default function ProductPage() {
     const { id } = useParams();
@@ -30,6 +33,9 @@ export default function ProductPage() {
     const product = products.find(p => p.id.toString() === id);
     const [mainImage, setMainImage] = useState<string | undefined>(undefined);
 
+    useEffect(() => {
+        preloadComponent
+    }, [])
     useEffect(() => {
         backButton.show();
         const offClick = backButton.onClick(() => {
@@ -98,28 +104,28 @@ export default function ProductPage() {
 
     return (
         <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ x: 0, opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.8, ease: "easeInOut" }}
-    >
-        <div className="container  pt-[90px] mx-auto h-screen overflow-y-hidden flex flex-col">
-            <ProductInfo product={product} />
-            <ProductImage
-                id={Number(id)}
-                mainImage={mainImage}
-                product={product}
-                onThumbnailClick={setMainImage}
-            />
-            <CartControls
-                product={product}
-                isInCart={isInCart}
-                cartItem={cartItem}
-                onAddToCart={handleCartAction}
-                onAddQuantity={handleAddCart}
-                onRemoveQuantity={handleRemoveCart}
-            />
-        </div>
+            initial={{ opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+        >
+            <div className="container  pt-[90px] mx-auto h-screen overflow-y-hidden flex flex-col">
+                <ProductInfo product={product} />
+                <ProductImage
+                    id={Number(id)}
+                    mainImage={mainImage}
+                    product={product}
+                    onThumbnailClick={setMainImage}
+                />
+                <CartControls
+                    product={product}
+                    isInCart={isInCart}
+                    cartItem={cartItem}
+                    onAddToCart={handleCartAction}
+                    onAddQuantity={handleAddCart}
+                    onRemoveQuantity={handleRemoveCart}
+                />
+            </div>
         </motion.div>
     );
 } 

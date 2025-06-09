@@ -9,6 +9,7 @@ import RoutesConfig from './routes';
 
 const App = () => {
   useTheme();
+  
 
   useEffect(() => {
     initTelegram();
