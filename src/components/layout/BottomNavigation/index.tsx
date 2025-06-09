@@ -55,14 +55,14 @@ export default function BottomNavigation() {
                 <div className='flex-1 flex items-center'>
                     <NavigationItem
                         to="/"
-                        icon={<NotCoin className="fill-black text-black w-[20px] h-[20px] scale-[180%] mt-[px] dark:fill-white -translate-y-[2px] dark:text-white" />}
+                        icon={<NotCoin className="fill-black text-black w-6 h-6  scale-[157%] dark:fill-white -translate-y-[1px] dark:text-white" />}
                         label="Store"
                     />
                     <NavigationItem
                         to="/account"
-                        icon={ (<div className='-translate-y-[76px] scale-[47%]'>
-                        <Profile scale={50} />
-                    </div>)}
+                        icon={ 
+                        <Profile scale={true} />
+                   }
                         label={""}
 
                     />
