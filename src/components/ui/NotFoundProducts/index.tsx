@@ -3,6 +3,8 @@ import { AnimatePresence, motion } from "motion/react";
 
 export default function NotFoundProducts() {
     const containerRef = useLottieAnimation("/chicken.tgs")
+
+
     return (
         <AnimatePresence>
             <motion.div className="  w-full h-screen fixed -z-10   flex justify-center items-center gap-2 flex-col bottom-8"

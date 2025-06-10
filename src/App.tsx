@@ -1,33 +1,20 @@
-// src/components/App.tsx
+import { Suspense, useEffect } from 'react';
 
-import { useEffect, useLayoutEffect } from 'react';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
-import { useTheme } from './hooks/useTheme';
+import { miniApp, themeParams, useLaunchParams, viewport } from '@telegram-apps/sdk-react';
 import { initTelegram } from './lib/initTelegram';
-import RoutesConfig from './routes';
-import { miniApp, viewport, themeParams, useLaunchParams } from '@telegram-apps/sdk-react';
+import LoadingMount from './components/ui/LoadingMount';
+import Routes from './routes';
+import { useTheme } from './hooks/useTheme';
 
-
-const App = () => {
+function App() {
   useTheme();
-  const params = useLaunchParams()
-  const startParam = params.tgWebAppStartParam
 
-  useLayoutEffect(() => {
-    if (startParam) {
-      const productId = startParam.split("_")[1];
-      if (productId) {
-        window.location.href = "/product/" + productId;
-      }
-    }
-  }, [])
-  const lp = useLaunchParams();
-
-  
+  const launchParams = useLaunchParams();
 
   useEffect(() => {
     
-    initTelegram(lp);
+    initTelegram(launchParams);
 
 
     return () => {
@@ -45,13 +32,18 @@ const App = () => {
       }
     };
   }, []);
-  console.log("App");
+
+  console.log("App Rendered");
 
   return (
-    <TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/">
-      <RoutesConfig />
+    <TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/tonconnect-manifest.json">
+      <div className="bg-white text-black dark:bg-black dark:text-white">
+        <Suspense fallback={<LoadingMount />}>
+        <Routes />
+        </Suspense>
+      </div>
     </TonConnectUIProvider>
   );
-};
+}
 
 export default App;

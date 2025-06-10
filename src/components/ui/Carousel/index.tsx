@@ -1,112 +1,111 @@
-import React, { useState, useEffect } from "react"
-import type { TouchEvent } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import React, { memo, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
-export default function Carousel({
-    children: slides,
-    autoSlide = false,
-    autoSlideInterval = 3000,
-    id,
-    startIndex = 0,
-    onSlideChange
+const variants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? "100%" : "-100%",
+    opacity: 0,
+  }),
+  center: {
+    zIndex: 1,
+    x: 0,
+    opacity: 1,
+  },
+  exit: (direction: number) => ({
+    zIndex: 0,
+    x: direction > 0 ? "-100%" : "100%",
+    opacity: 0,
+  }),
+};
+
+const swipeConfidenceThreshold = 10000;
+const swipePower = (offset: number, velocity: number) => Math.abs(offset) * velocity;
+
+const Carousel = memo(({
+  children: slides,
+  page,
+  direction,
+  onPageChange,
+  onInteractionStart,
+  onInteractionEnd,
 }: {
-    children: React.ReactNode[];
-    autoSlide?: boolean;
-    autoSlideInterval?: number;
-    id: number;
-    startIndex?: number;
-    onSlideChange?: (index: number) => void;
-}) {
-    const [curr, setCurr] = useState(startIndex ||id -1)
+  children: React.ReactNode[];
+  page: number;
+  direction: number;
+  onPageChange: (newPage: number, newDirection: number) => void;
+  onInteractionStart: () => void;
+  onInteractionEnd: () => void;
+}) => {
+  const goToPage = useCallback((newPage: number) => {
+    const newDirection = newPage > page ? 1 : -1;
+    onPageChange(newPage, newDirection);
+  }, [page, onPageChange]);
 
-    const [touchStart, setTouchStart] = useState<number | null>(null)
-    const [touchEnd, setTouchEnd] = useState<number | null>(null)
+  return (
+    <div className="relative w-full aspect-square overflow-hidden rounded-2xl">
+      <AnimatePresence initial={false} custom={direction}>
+        <motion.div
+          key={page}
+          custom={direction}
+          variants={variants}
+          transition={{
+            type: "tween",
+            ease: [0.22, 1, 0.36, 1],
+            duration: 0.6,
+          }}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={0.1}
+          onDragStart={onInteractionStart}
+          onDragEnd={(_, { offset, velocity }) => {
+            onInteractionEnd();
+            
+            const power = swipePower(offset.x, velocity.x);
 
-    const prev = () => {
-        const newIndex = curr === 0 ? slides.length - 1 : curr - 1;
-        setCurr(newIndex);
-        onSlideChange?.(newIndex);
-    }
+            if (power < -swipeConfidenceThreshold) {
+              const newDirection = 1;
+              const newPage = (page + newDirection + slides.length) % slides.length;
+              onPageChange(newPage, newDirection);
+            } else if (power > swipeConfidenceThreshold) {
+              const newDirection = -1;
+              const newPage = (page + newDirection + slides.length) % slides.length;
+              onPageChange(newPage, newDirection);
+            }
+          }}
+          className="absolute h-full w-full"
+        >
+          {slides[page]}
+        </motion.div>
+      </AnimatePresence>
 
-    const next = () => {
-        const newIndex = curr === slides.length - 1 ? 0 : curr + 1;
-        setCurr(newIndex);
-        onSlideChange?.(newIndex);
-    }
-
-    useEffect(() => {
-        if (!autoSlide) return
-        const slideInterval = setInterval(next, autoSlideInterval)
-        return () => clearInterval(slideInterval)
-    }, [])
-
-    const handleTouchStart = (e: TouchEvent) => {
-        setTouchStart(e.targetTouches[0].clientX)
-    }
-
-    const handleTouchMove = (e: TouchEvent) => {
-        setTouchEnd(e.targetTouches[0].clientX)
-    }
-
-    const handleTouchEnd = () => {
-        if (!touchStart || !touchEnd) return
-        const distance = touchStart - touchEnd
-        const isLeftSwipe = distance > 50
-        const isRightSwipe = distance < -50
-
-        if (isLeftSwipe) {
-            next()
-        }
-        if (isRightSwipe) {
-            prev()
-        }
-
-        setTouchStart(null)
-        setTouchEnd(null)
-    }
-    
-
-    return (
-        <div className="overflow-hidden relative w-full rounded-2xl">
-            <div className="relative w-full h-full  ">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={curr}
-                        initial={{ opacity: 1 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0.8, scale: 0.95, x: (touchStart && touchEnd) ? (touchStart - touchEnd > 0 ? -50 : 50) : 0 }}
-                        transition={{ duration: 0.4 }}
-                        className="w-full"
-                        onTouchStart={handleTouchStart}
-                        onTouchMove={handleTouchMove}
-                        onTouchEnd={handleTouchEnd}
-                    >
-                        {slides[curr]}
-                    </motion.div>
-                </AnimatePresence>
-            </div>
-
-            <div className="absolute bottom-[9px] right-0 left-0">
-                <div className="flex items-center  justify-center gap-[4px]">
-                    {slides.map((_, i) => (
-                        <div
-                            key={i}
-                            className={`
-                                transition-all bg-white/5 dark:bg-gray-200
-                                ${curr === i
-                                    ? "w-[20px] h-[4px] rounded-[4px]"
-                                    : `rounded-full ${Math.abs(i - curr) === 1
-                                        ? "w-[4px] h-[4px] opacity-20"
-                                        : Math.abs(i - curr) === 2
-                                            ? "w-[3px] h-[3px] opacity-25"
-                                            : "w-[2px] h-[2px] opacity-20"
-                                    }`
-                                }
-                            `}
-                        />
-                    ))}
-                </div>
-            </div>
+      <div className="absolute bottom-[9px] right-0 left-0 z-10">
+        <div className="flex items-center justify-center gap-[4px]">
+          {slides.map((_, i) => (
+            <div
+                key={i}
+                onClick={(e) => { e.stopPropagation(); if (i !== page) goToPage(i); }}
+                className={`
+                    transition-all duration-300 cursor-pointer
+                    bg-white/50 dark:bg-gray-200/50  
+                    ${page === i 
+                        ? "w-[20px] h-[4px] rounded-[4px] !bg-white dark:!bg-gray-200" // نقطه فعال
+                        : `rounded-full ${Math.abs(i - page) === 1
+                            ? "w-[4px] h-[4px] opacity-50"
+                            : Math.abs(i - page) === 2
+                                ? "w-[3px] h-[3px] opacity-40" 
+                                : "w-[2px] h-[2px] opacity-30"   
+                        }`
+                    }
+                `}
+            />
+          ))}
         </div>
-    )
-}
+      </div>
+    </div>
+  );
+});
+
+export default Carousel;

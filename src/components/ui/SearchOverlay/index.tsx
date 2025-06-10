@@ -33,11 +33,12 @@ export default function SearchOverlay({
     <AnimatePresence>
       {isOpen && (
         <motion.div
-          initial={{ y: "-95%" }}
+          key="modal"
+          initial={{ y: "-65%" }}
           animate={{ y: 0 }}
-          exit={{ y: "-250%" }}
-          transition={{ type: "spring", damping: 20, stiffness: 300}}
-          className="fixed top-0 mt-20 items-center  left-0 right-0 z-50  flex dark:bg-black bg-white px-4 border-b border-white dark:border-black gap-3 "
+          exit={{ y: 0, opacity: 0 }}
+          transition={{ type: "spring", damping: 20, stiffness: 200 }}
+          className="fixed top-0 safe-area items-center  left-0 right-0 z-50  flex dark:bg-black bg-white px-4 border-b border-white dark:border-black gap-3 "
         >
           <div className="flex items-center space-x-4 flex-1 h-[60px] ">
             <div className="flex-1 flex relative">

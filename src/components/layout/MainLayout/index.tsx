@@ -1,21 +1,17 @@
-import React from 'react';
-import { Outlet, ScrollRestoration } from 'react-router';
+import { Outlet, ScrollRestoration } from 'react-router'; 
 import BottomNavigation from '../BottomNavigation';
-// import BottomNavigation from '../BottomNavigation';
+import { memo } from 'motion/react';
 
-const MainLayout = React.memo(() => {
-    console.log("MainLayout");
+const MainLayout = memo(() => {
+    console.log("MainLayout rendered");
     return (
         <>
-            <main className='safe-area '>
+            <main className='safe-area'>
                 <Outlet />
             </main>
 
-            <ScrollRestoration
-                getKey={(location, _) => location.pathname} />
+            <ScrollRestoration getKey={(location) => location.pathname} />
             <BottomNavigation />
-
-
         </>
     );
 });

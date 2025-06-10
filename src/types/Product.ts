@@ -35,7 +35,6 @@ export type ProductImageProps ={
 
 export type ProductCardProps = {
     product: Product;
-    isInCart: boolean;
     onImageLoad: (productId: number) => void;
     isImageLoaded: boolean;
 }

@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from "motion/react";
 export default function SkeletonProducts() {
     return (
         <AnimatePresence>
-            <div className="grid grid-cols-2 gap-4 px-4 mt-5 mb-20">
+            <div className="grid grid-cols-2 gap-4 px-4  mb-16">
                 {Array.from({ length: 6 }).map((_, idx) => (
                     <motion.div
                         key={idx}
@@ -15,7 +15,7 @@ export default function SkeletonProducts() {
                             duration: 0.8,
                             delay: idx * 0.1,
                         }}
-                        className="space-y-2"
+                        className="space-y-2 "
                     >
                         <div className="rounded-2xl aspect-square bg-gray-200 dark:bg-white/10 animate-pulse" />
 

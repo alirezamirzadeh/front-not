@@ -1,109 +1,119 @@
-import TickIcon from "@/components/icon/TickIcon";
-import type { ProductCardProps } from "@/types/Product";
-import { motion } from "motion/react";
+import { memo, useState, useCallback, useMemo } from "react";
+import { motion } from "framer-motion";
+import { useShallow } from 'zustand/react/shallow';
+import type { Product } from "@/types/Product";
+
 import Carousel from "../Carousel";
-import { memo } from "react";
+import TickIcon from "@/components/icon/TickIcon";
 import { useViewTransition } from "@/hooks/useViewTransition";
 import { useProductsStore } from "@/store/productsStore";
+import { useCartStore } from "@/store/cartStore";
 
-export const ProductCard = memo(({ product, isInCart, onImageLoad, isImageLoaded }: ProductCardProps) => {
+export const ProductCard = memo(({ product, positionInGrid }: { product: Product; positionInGrid: 'left' | 'right' }) => {
     const navigateWithTransition = useViewTransition();
-    const getSelectedImageIndex = useProductsStore(state => state.getSelectedImageIndex);
-    const setSelectedImageIndex = useProductsStore(state => state.setSelectedImageIndex);
-    const selectedIndex = getSelectedImageIndex(product.id);
+    const [isInteracting, setIsInteracting] = useState(false);
+    const [direction, setDirection] = useState(0);
 
-    const handleClick = () => {
+    const { selectedIndex, setSelectedImageIndex } = useProductsStore(
+        useShallow((state) => ({
+            selectedIndex: state.selectedImageIndices[product.id] || 0,
+            setSelectedImageIndex: state.setSelectedImageIndex,
+        }))
+    );
+    const isInCart = useCartStore((state) => state.items.some((item) => item.id === String(product.id)));
+
+    const handlePageChange = useCallback((newPage: number, newDirection: number) => {
+        setSelectedImageIndex(product.id, newPage);
+        setDirection(newDirection);
+    }, [product.id, setSelectedImageIndex]);
+
+    const handleClick = useCallback(() => {
         navigateWithTransition(`/product/${product.id}`);
-    };
+    }, [navigateWithTransition, product.id]);
 
-    const handleSlideChange = (index: number) => {
-        setSelectedImageIndex(product.id, index);
-    };
+    // ۱. پایدارسازی توابع تعامل برای جلوگیری از رندر غیرضروری Carousel
+    const handleInteractionStart = useCallback(() => setIsInteracting(true), []);
+    const handleInteractionEnd = useCallback(() => setIsInteracting(false), []);
+
+    const carouselSlides = useMemo(() => (
+        product.images.length > 0
+            ? product.images.map((url, idx) => (
+                <div key={idx} className="w-full h-full bg-gray-200 dark:bg-white/10">
+                    <img className="w-full h-full object-cover" src={url} alt={`${product.name} ${idx + 1}`} loading="lazy" />
+                </div>
+            ))
+            : [<div key="placeholder" className="w-full aspect-square bg-gray-200 dark:bg-white/10" />]
+    ), [product.images, product.name]);
 
     const renderPrice = () => {
         if (product.left === 0) return <span className="opacity-60">Out of stock</span>;
         return (
             <>
-                {product.price.toLocaleString()}&nbsp;
-                <span className="opacity-50"> {product.currency}</span>
+
+                {product.price.toLocaleString()}
+                <span className="opacity-50 ml-1"> {product.currency}</span>
                 {(product.id === 2 || product.id === 5) && <span className="opacity-80  text-black/50 dark:text-white/50 ml-1 line-through">{(product.price + product.price * (product.id === 2 ? 0.1 : 0.15)).toLocaleString()} </span>}
             </>
         );
     };
 
+    const cardVariants = useMemo(() => {
+        const shouldGoUnder = positionInGrid === 'right' && direction === -1;
+        return {
+            rest: { scale: 1, zIndex: 1, boxShadow: '0px 2px 8px rgba(0,0,0,0.1)' },
+            hover: {
+                scale: 1.08,
+                zIndex: shouldGoUnder ? 5 : 10,
+                boxShadow: '0px 15px 30px rgba(0,0,0,0.2)'
+            },
+        }
+    }, [positionInGrid, direction]);
+
     return (
         <motion.div
+            layout
+            initial={{ opacity: 0.85,  }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0,  }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+
             onClick={handleClick}
-            key={product.id}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="rounded-lg  overflow-hidden cursor-pointer relative"
+            onHoverStart={handleInteractionStart}
+            onHoverEnd={handleInteractionEnd}
+            className="cursor-pointer relative flex flex-col"
         >
-            {isInCart && (
-                <div className="absolute top-2 right-2 z-10 h-[22px] w-[22px] flex justify-center items-center bg-black text-white dark:bg-white dark:text-black rounded-full">
-                    <TickIcon className="w-[11px] h-[11px]" />
-                </div>
-            )}
-
-            {(product.id === 2 || product.id === 5) && (
-                <div className="absolute top-0 left-0 z-10 p-1 bg-black text-white dark:bg-white dark:text-black rounded-br-lg text-sm">
-                    {product.id === 2 ? "10%" : "15%"}
-                </div>
-            )}
-            <Carousel
-                id={Number(product.id)}
-                startIndex={selectedIndex}
-                onSlideChange={handleSlideChange}
+            <motion.div
+                animate={isInteracting ? "hover" : "rest"}
+                className="relative rounded-2xl"
+                variants={cardVariants}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
             >
-                {product.images.length > 0 ? (
-                    product.images.map((url, idx) => (
-                        <motion.div
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
-                            key={idx}
-                            className="relative rounded-2xl aspect-square"
-                        >
-                            {!isImageLoaded && (
-                                <div className="absolute inset-0 rounded-2xl bg-gray-200 dark:bg-white/10 animate-pulse" />
-                            )}
-                            <div
-                                className="w-full h-full rounded-2xl overflow-hidden"
-                               
-                            >
-                                <picture  style={{
-                                    viewTransitionName: `product-image-${product.id}`
-                                }}>
-                                <img
-                                    className={`rounded-2xl !aspect-square object-cover ${isImageLoaded ? 'opacity-100' : 'opacity-0'}`}
-                                    width="1500"
-                                    src={url}
-                                    alt={`${product.name} ${idx + 1}`}
-                                    onLoad={() => onImageLoad(product.id)}
-                                    loading="lazy"
-                                />
-                                </picture>
-                            </div>
-                        </motion.div>
-                    ))
-                ) : [
-                    <div
-                        key="placeholder"
-                        className="rounded-2xl aspect-square bg-gray-200 dark:bg-white/10"
-                    />
-                ]}
-            </Carousel>
 
-            <div className="p-2">
-                <p className="text-[17px] font-[590] truncate">
-                    {product.name}
-                </p>
-                <p className="text-sm font-normal flex">
-                    {renderPrice()}
-                </p>
+                {isInCart && (
+                    <div className="absolute top-2 right-2 z-20 h-5 w-5 flex justify-center items-center bg-black/80 text-white dark:bg-white/90 dark:text-black rounded-full shadow-lg">
+                        <TickIcon className="w-2.5 h-2.5" />
+                    </div>
+                )}
+
+                {(product.id === 2 || product.id === 5) && (
+                    <div className="absolute top-0 left-0 z-10 p-1 bg-black text-white dark:bg-white rounded-tl-2xl dark:text-black rounded-br-lg text-sm">
+                        {product.id === 2 ? "10%" : "15%"}
+                    </div>
+                )}
+
+                <Carousel
+                    page={selectedIndex}
+                    direction={direction}
+                    onPageChange={handlePageChange}
+                    onInteractionStart={handleInteractionStart}
+                    onInteractionEnd={handleInteractionEnd}
+                >
+                    {carouselSlides}
+                </Carousel>
+            </motion.div>
+            <div className="p-2 pt-3">
+                <p className="font-semibold truncate text-gray-800 dark:text-gray-200">{product.name}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 flex">{renderPrice()}</p>
             </div>
         </motion.div>
     );

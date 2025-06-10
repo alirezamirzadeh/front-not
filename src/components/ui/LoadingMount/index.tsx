@@ -1,6 +1,5 @@
 import CartIcon from "@/components/icon/CartIcon"
-import { motion } from "motion/react"
-import type { Variants } from "motion/react"
+import { motion, type Variants } from "framer-motion"
 
 
 function LoadingMount() {
