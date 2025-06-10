@@ -6,7 +6,7 @@ import type { Product } from "@/types/Product";
 import Carousel from "../Carousel";
 import { useViewTransition } from "@/hooks/useViewTransition";
 import { useProductsStore } from "@/store/productsStore";
-import { useCartStore } from "@/store/cartStore";
+// import { useCartStore } from "@/store/cartStore";
 
 export const ProductCard = memo(({ product, positionInGrid }: { product: Product; positionInGrid: 'left' | 'right' }) => {
     const navigateWithTransition = useViewTransition();
