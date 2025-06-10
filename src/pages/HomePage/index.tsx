@@ -11,7 +11,7 @@ export default function HomePage() {
         
             <motion.div
 
-                className=" overflow-y-scroll overscroll-y-contain h-[calc(100vh-10px)] "
+                className=" overflow-y-scroll overscroll-y-contain h-[calc(100vh-10px)]  pb-20"
             >
 
                 <Header />
