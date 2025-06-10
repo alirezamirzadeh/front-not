@@ -4,7 +4,6 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Product } from "@/types/Product";
 
 import Carousel from "../Carousel";
-import TickIcon from "@/components/icon/TickIcon";
 import { useViewTransition } from "@/hooks/useViewTransition";
 import { useProductsStore } from "@/store/productsStore";
 import { useCartStore } from "@/store/cartStore";
@@ -23,7 +22,7 @@ export const ProductCard = memo(({ product, positionInGrid }: { product: Product
         }))
     );
     // ... (بقیه هوک‌ها و توابع بدون تغییر) ...
-    const isInCart = useCartStore((state) => state.items.some((item) => item.id === String(product.id)));
+    // const isInCart = useCartStore((state) => state.items.some((item) => item.id === String(product.id)));
 
     const handlePageChange = useCallback((newPage: number, newDirection: number) => {
         setSelectedImageIndex(product.id, newPage);
