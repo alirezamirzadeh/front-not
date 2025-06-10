@@ -68,7 +68,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                         className="w-full h-full rounded-[20px] overflow-hidden"
                     >
                         <picture style={{ viewTransitionName: `product-image-${product.id}` }}>
-                            <img src={mainImage} alt={product.name} className="w-full h-full object-cover"/>
+                            <img src={mainImage} alt={product.name} className="w-full h-full rounded-[20px] object-cover"/>
                         </picture>
                     </motion.div>
                 </AnimatePresence>
