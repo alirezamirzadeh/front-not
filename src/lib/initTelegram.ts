@@ -40,26 +40,24 @@ export const initTelegram = async (lp: LaunchParams) => {
 
 
   init();
- // 2. مقداردهی اولیه و اتصال MiniApp و Theme
- if (miniApp.mountSync.isAvailable() && !miniApp.isMounted()) {
-  miniApp.mountSync();
-  handleTheme(miniApp.isDark());
-  miniApp.isDark.sub(handleTheme);
-}
-if (themeParams.mountSync.isAvailable() && !themeParams.isMounted()) {
-  themeParams.mountSync();
-  bindThemeParamsCssVars();
-}
-
-// 3. مقداردهی اولیه Viewport
-if (viewport.mount.isAvailable() && !viewport.isMounted()) {
-  try {
-      await viewport.mount();
-      bindViewportCssVars(); // متغیرهای CSS را پس از mount شدن متصل می‌کند
-  } catch (error) {
-      console.error("Error mounting viewport:", error);
+  if (miniApp.mountSync.isAvailable() && !miniApp.isMounted()) {
+    miniApp.mountSync();
+    handleTheme(miniApp.isDark());
+    miniApp.isDark.sub(handleTheme);
   }
-}
+  if (themeParams.mountSync.isAvailable() && !themeParams.isMounted()) {
+    themeParams.mountSync();
+    bindThemeParamsCssVars();
+  }
+
+  if (viewport.mount.isAvailable() && !viewport.isMounted()) {
+    try {
+      await viewport.mount();
+      bindViewportCssVars();
+    } catch (error) {
+      console.error("Error mounting viewport:", error);
+    }
+  }
   postEvent("web_app_setup_back_button", {
     is_visible: false,
   });

@@ -48,14 +48,14 @@ export default function GridProducts() {
             {loading && <SkeletonProducts />}
 
             {error && (
-                <div className="p-4 text-center text-red-500">Error: {error}</div>
+                <div className="p-4 text-center  text-red-500">Error: {error}</div>
             )}
 
             {!loading && !error && (
                 filteredProducts.length <= 0 ?
                     <NotFoundProducts />
                     :
-                    <div className="grid   grid-cols-2 gap-4 px-4 pb-20" style={{ viewTransitionName: 'product-grid' }}>
+                    <div className="grid   grid-cols-2 gap-4 px-4 pb-40" style={{ viewTransitionName: 'product-grid' }}>
                         <AnimatePresence mode="popLayout">
                             {filteredProducts.map((product) => (
                                 <ProductCard
