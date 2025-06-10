@@ -4,7 +4,6 @@ import Profile from '@/components/ui/Profile';
 
 import HistoryBox from '@/components/ui/HistoryBox';
 import useBackButton from '@/hooks/useBackButton';
-import BottomNavigation from '@/components/layout/BottomNavigation';
 
 export default function AccountPage() {
 
@@ -16,7 +15,7 @@ export default function AccountPage() {
 
   return (
       <motion.div
-      className="px-4  relative overflow-y-scroll overscroll-y-contain h-[calc(100vh-20px)] w-screen min-h-screen flex flex-col"
+      className="px-4    relative overflow-y-scroll overscroll-y-contain h-[calc(100vh-20px)] w-screen min-h-screen flex flex-col"
 
     >
       <div className="sticky top-0  bg-white dark:bg-black z-10">

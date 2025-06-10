@@ -74,27 +74,24 @@ body {
 
   box-sizing: border-box;
   overflow-x: hidden;
-  color: black;
-  background-color: #fff;
-  min-height: 100vh;
+  /* color: black;
+  background-color: #fff; */
   overflow: hidden;
   overscroll-behavior: none;
 
 	width: 100vw;
-	min-height: max(var(--ptg-viewport-height), 100vh);
+  height: 100vh;
+	/* padding-top: calc(var(--tg-viewport-width) /6 )!important; */
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   touch-action: none !important;
+  position: absolute;
 
 }
-.home {
-  padding-top: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top) ) !important;
-  margin-top: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top) ) !important;
-  margin-bottom: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top) );
-  
+.safe-area {
+  padding-top: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top)) !important;
+
 }
-
-
 
 
 .text-main {

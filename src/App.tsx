@@ -1,33 +1,32 @@
 // src/components/App.tsx
 
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { useTheme } from './hooks/useTheme';
 import { initTelegram } from './lib/initTelegram';
 import RoutesConfig from './routes';
 import { miniApp, viewport, themeParams, useLaunchParams } from '@telegram-apps/sdk-react';
-import { useNavigate } from 'react-router';
 
 
 const App = () => {
   useTheme();
-  // const params = useLaunchParams()
-  // const startParam = params.tgWebAppStartParam
-  // const navigate = useNavigate()
+  const params = useLaunchParams()
+  const startParam = params.tgWebAppStartParam
 
-  // useEffect(() => {
-  //   if (startParam) {
-  //     const productId = startParam.split("_")[1];
-  //     if (productId) {
-  //       navigate("/product/" + productId);
-  //     }
-  //   }
-  // }, [])
+  useLayoutEffect(() => {
+    if (startParam) {
+      const productId = startParam.split("_")[1];
+      if (productId) {
+        window.location.href = "/product/" + productId;
+      }
+    }
+  }, [])
   const lp = useLaunchParams();
 
   
 
   useEffect(() => {
+    
     initTelegram(lp);
 
 

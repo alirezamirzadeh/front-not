@@ -21,7 +21,7 @@ const router = createBrowserRouter([
 
 export default function RoutesConfig() {
   return (
-    <div className="bg-white !home  text-black dark:bg-black dark:text-white">
+    <div className="bg-white   text-black dark:bg-black dark:text-white">
       <Suspense fallback={<LoadingMount />}>
         <RouterProvider router={router} />
       </Suspense>

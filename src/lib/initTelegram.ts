@@ -34,12 +34,32 @@ const handleTheme = (isDark: boolean) => {
   });
 };
 
+
 export const initTelegram = async (lp: LaunchParams) => {
   if (!isTMA()) return;
 
 
   init();
+ // 2. مقداردهی اولیه و اتصال MiniApp و Theme
+ if (miniApp.mountSync.isAvailable() && !miniApp.isMounted()) {
+  miniApp.mountSync();
+  handleTheme(miniApp.isDark());
+  miniApp.isDark.sub(handleTheme);
+}
+if (themeParams.mountSync.isAvailable() && !themeParams.isMounted()) {
+  themeParams.mountSync();
+  bindThemeParamsCssVars();
+}
 
+// 3. مقداردهی اولیه Viewport
+if (viewport.mount.isAvailable() && !viewport.isMounted()) {
+  try {
+      await viewport.mount();
+      bindViewportCssVars(); // متغیرهای CSS را پس از mount شدن متصل می‌کند
+  } catch (error) {
+      console.error("Error mounting viewport:", error);
+  }
+}
   postEvent("web_app_setup_back_button", {
     is_visible: false,
   });
@@ -59,9 +79,15 @@ export const initTelegram = async (lp: LaunchParams) => {
   postEvent("web_app_ready");
   postEvent("iframe_ready");
   postEvent("web_app_expand");
+  // await initializeViewport();
 
+  if (viewport.mount.isAvailable()) {
+    viewport.expand();
+  }
 
- 
+  if (viewport.requestFullscreen.isAvailable()) {
+    await viewport.requestFullscreen();
+  }
 
   if (
     viewport.mount.isAvailable() &&
@@ -70,7 +96,9 @@ export const initTelegram = async (lp: LaunchParams) => {
     await viewport.mount();
     await bindViewportCssVars();
 
+
   }
+
 
   if (miniApp.mountSync.isAvailable() && !miniApp.isMounted()) {
     miniApp.mountSync();
@@ -83,10 +111,14 @@ export const initTelegram = async (lp: LaunchParams) => {
     themeParams.mountSync();
     bindThemeParamsCssVars();
   }
-  // }
 
   setTimeout(() => {
-
+    console.log(
+      "Before persisting:",
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--tg-viewport-safe-area-inset-top-SetTimeOut"
+      )
+    );
     const persistVariables = [
       "tg-viewport-height",
       "tg-viewport-safe-area-inset-top",
@@ -94,18 +126,19 @@ export const initTelegram = async (lp: LaunchParams) => {
       "tg-viewport-safe-area-inset-bottom",
       "tg-viewport-content-safe-area-inset-bottom",
     ];
-
     for (const name of persistVariables) {
       (document.querySelector(":root") as HTMLElement).style.setProperty(
         `--${name}`,
-        (
-          document.querySelector(":root") as HTMLElement
-        ).style.getPropertyValue(`--${name}`),
+        (document.querySelector(":root") as HTMLElement).style.getPropertyValue(`--${name}`),
       );
     }
-
-  },1000)
-
+    console.log(
+      "After persisting:",
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--tg-viewport-safe-area-inset-top"
+      )
+    );
+  });
 
   if (isVersionAtLeast("6.1", lp.tgWebAppVersion)) {
     postEvent("web_app_setup_settings_button", {
@@ -124,6 +157,9 @@ export const initTelegram = async (lp: LaunchParams) => {
       allow_vertical_swipe: false,
     });
 
+
+
+  }
   if (isVersionAtLeast("8.0", lp.tgWebAppVersion)) {
     postEvent("web_app_toggle_orientation_lock", {
       locked: true,
@@ -133,9 +169,13 @@ export const initTelegram = async (lp: LaunchParams) => {
       postEvent("web_app_request_fullscreen");
     }
   }
-
-  if (isVersionAtLeast("8.0", lp.tgWebAppVersion)) {
-  }     viewport.requestFullscreen();
-
+  if (isVersionAtLeast("7.10", lp.tgWebAppVersion)) {
+    if (viewport.requestFullscreen.isAvailable()) {
+      try {
+        await viewport.requestFullscreen();
+      } catch (error) {
+        console.error("Fullscreen request failed:", error);
+      }
+    }
   }
 };

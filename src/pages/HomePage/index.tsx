@@ -2,8 +2,7 @@
 import GridProducts from "@/components/ui/GridProducts";
 import Header from '@/components/layout/Header';
 import { motion } from 'framer-motion';
-import BottomNavigation from "@/components/layout/BottomNavigation";
-import { viewport } from "@telegram-apps/sdk-react";
+
 
 export default function HomePage() {
     console.log("HomePage");

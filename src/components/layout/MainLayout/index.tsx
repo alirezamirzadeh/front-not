@@ -7,7 +7,7 @@ const MainLayout = React.memo(() => {
     console.log("MainLayout");
     return (
         <>
-            <main>
+            <main className='safe-area '>
                 <Outlet />
             </main>
 
