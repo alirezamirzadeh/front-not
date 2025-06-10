@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useEffect } from "react";
 import { useProductsStore } from "@/store/productsStore";
 import { useShallow } from "zustand/react/shallow";
+import FooterButton from "@/components/ui/FooterButton";
 
 
 export default function HomePage() {
@@ -39,8 +40,9 @@ export default function HomePage() {
                 <GridProducts />
 
             </motion.div>
-        </motion.div>
+            <FooterButton />
 
+        </motion.div>
 
     );
 }

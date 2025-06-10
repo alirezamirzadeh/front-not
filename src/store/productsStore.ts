@@ -90,15 +90,22 @@ export const useProductsStore = create<ProductsStore>()(
       set({ isFiltering: true });
       await new Promise(resolve => setTimeout(resolve, 300));
       set((state) => ({
-        filters: { ...state.tempFilters },
+        filters: { 
+            ...state.filters,
+            categories: state.tempFilters.categories,
+            priceRange: state.tempFilters.priceRange,
+        },
         isFiltering: false
       }));
     },
 
     resetTempFilters: () =>
       set((state) => ({
-        tempFilters: { ...state.filters }
-      })),
+        tempFilters: { 
+          ...state.tempFilters,
+          categories: state.filters.categories,
+          priceRange: state.filters.priceRange,
+      }      })),
 
     getFilteredProducts: () => {
       const { products, filters } = get();

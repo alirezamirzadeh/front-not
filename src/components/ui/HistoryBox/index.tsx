@@ -1,57 +1,23 @@
-import { useEffect } from 'react';
-import { useHistoryStore } from '@/store/historyStore';
-import { useProductsStore } from '@/store/productsStore';
-
+import { useAccountData } from '@/hooks/useAccountData'; // ۱. استفاده از هوک سفارشی
 import { HistoryList } from '@/components/ui/HistoryList';
 import { HistorySkeleton } from '@/components/ui/HistorySkeleton';
 import { EmptyHistory } from '@/components/ui/EmptyHistory';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
-import { useShallow } from 'zustand/react/shallow';
 
 export default function HistoryBox() {
+    // ۲. تمام منطق پیچیده حالا در این یک خط خلاصه شده
+    const { status, errorMessage, history, products } = useAccountData();
 
-    const { history, hLoading, hError, fetchHistory } = useHistoryStore(
-        useShallow((s) => ({
-            history: s.history,
-            hLoading: s.loading,
-            hError: s.error,
-            fetchHistory: s.fetchHistory,
-        }))
-    );
-
-    const { products, pLoading, pError, fetchProducts } = useProductsStore(
-        useShallow((s) => ({
-            products: s.products,
-            pLoading: s.loading,
-            pError: s.error,
-            fetchProducts: s.fetchProducts,
-        }))
-    );
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            await Promise.all([fetchHistory(), fetchProducts()]);
-        };
-        if (history.length === 0 || products.length === 0) {
-            fetchData();
-        }
-    }, []);
-
-
-
-    console.log('HistoryBox');
+    console.log('HistoryBox rendered');
 
     return (
-        <div className="flex-1 overflow-y-auto">
-            {hLoading || pLoading ? (
-                <HistorySkeleton />
-            ) : hError || pError ? (
-                <ErrorMessage message={hError || pError || ""} />
-            ) : history.length === 0 ? (
-                <EmptyHistory />
-            ) : (
-                <HistoryList history={history} products={products} />
+        <div className="flex-1 overflow-y-auto pb-20">
+            {status === 'loading' && <HistorySkeleton />}
+            {status === 'error' && <ErrorMessage message={errorMessage || "An error occurred."} />}
+            {status === 'success' && (
+                history.length === 0 
+                    ? <EmptyHistory /> 
+                    : <HistoryList history={history} products={products} />
             )}
         </div>
     );

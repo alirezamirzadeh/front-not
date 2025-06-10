@@ -16,7 +16,7 @@ export const ProductCard = memo(({ product, positionInGrid }: { product: Product
 
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow((state) => ({
-            selectedIndex: state.selectedImageIndices[product.id] || 0,
+            selectedIndex: state.selectedImageIndices[product.id] || product.id -1,
             setSelectedImageIndex: state.setSelectedImageIndex,
         }))
     );

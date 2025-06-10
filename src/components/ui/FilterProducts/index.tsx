@@ -4,7 +4,7 @@ import CloseButton from "@/components/ui/CloseButton";
 import { Drawer, DrawerClose, DrawerContent, DrawerFooter, DrawerHeader, DrawerTrigger } from "@/components/ui/Drawer";
 import { useProductsStore } from "@/store/productsStore";
 import { MultiRangeSlider } from "../MultiRangeSlider";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/ui";
 import { useShallow } from 'zustand/react/shallow';
@@ -34,7 +34,9 @@ export default function FilterProducts() {
         );
 
 
-    const categories = products.map(product => product.category).filter((item, index, array) => array.indexOf(item) === index)
+    const categories = useMemo(() => {
+        return [...new Set(products.map(product => product.category))];
+    }, [products]);
     const maxPrice = getMaxPrice()
 
     useEffect(() => {
@@ -44,7 +46,7 @@ export default function FilterProducts() {
     const handleApplyFilters = useCallback(async () => {
         await applyFilters();
         drawerRef.current?.click();
-      }, [applyFilters]);
+    }, [applyFilters]);
     console.log("FilterProducts");
 
     return (
@@ -81,8 +83,8 @@ export default function FilterProducts() {
                                 onValueChange={setTempPriceRange}
                                 min={0}
                                 max={maxPrice}
-                                defaultValue={[0, maxPrice]}
-                            />
+                                step={10} 
+                          />
                         </div>
                         <p className="text-left">{tempFilters.priceRange[0]}<span className="opacity-50 mx-1"> NOT</span>-&nbsp;{tempFilters.priceRange[1]}<span className="opacity-50 mx-1"> NOT</span></p>
                     </div>

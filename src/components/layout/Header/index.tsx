@@ -1,10 +1,11 @@
 import Cart from "@/components/ui/Cart";
 import FilterProducts from "@/components/ui/FilterProducts";
 import Search from '@/components/ui/Search';
+import { memo } from "react";
 
 
 
-export default function Header() {
+const Header = memo(() => {
     console.log("Header");
     
     return (
@@ -23,4 +24,5 @@ export default function Header() {
             </div>
         </header>
     )
-}
+})
+export default Header;
