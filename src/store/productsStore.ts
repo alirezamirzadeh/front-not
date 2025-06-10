@@ -1,5 +1,6 @@
 import { fetchGet } from "@/services/apiService";
 import type { ProductsState, Product } from "@/types/Product";
+import type { TransitionStartFunction } from "react";
 import { create } from "zustand";
 
 interface FilterState {
@@ -22,7 +23,7 @@ interface ProductsStore extends ProductsState {
   resetTempFilters: () => void;
   getFilteredProducts: () => Product[];
   getMaxPrice: () => number;
-  fetchProducts: () => Promise<void>;
+   fetchProducts: (startTransition?: TransitionStartFunction) => Promise<void>;
 }
 
 export const useProductsStore = create<ProductsStore>()(
@@ -127,7 +128,7 @@ export const useProductsStore = create<ProductsStore>()(
       });
     },
 
-    fetchProducts: async () => {
+    fetchProducts: async (startTransition) => {
       if (get().loading || get().products.length > 0) {
         return;
       }
@@ -144,12 +145,19 @@ export const useProductsStore = create<ProductsStore>()(
             priceRange: [0, maxPrice] as [number, number],
             searchText: "",
           };
-          set({
+          const newState = {
             products,
             loading: false,
             filters: initialFilters,
             tempFilters: initialFilters
-          });
+          };
+          if (startTransition) {
+            startTransition(() => {
+              set(newState);
+            });
+          }else {
+            set(newState);
+          }
         } else {
           throw new Error(res.error || 'Failed to fetch products');
         }

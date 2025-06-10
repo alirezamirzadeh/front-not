@@ -13,9 +13,7 @@ function App() {
   const launchParams = useLaunchParams();
 
   useEffect(() => {
-    
     initTelegram(launchParams);
-
 
     return () => {
       if (viewport.isMounted()) {
@@ -31,7 +29,7 @@ function App() {
         themeParams.unmount();
       }
     };
-  }, []);
+  }, [launchParams]);
 
   console.log("App Rendered");
 
@@ -39,7 +37,7 @@ function App() {
     <TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/tonconnect-manifest.json">
       <div className="bg-white text-black dark:bg-black dark:text-white">
         <Suspense fallback={<LoadingMount />}>
-        <Routes />
+          <Routes />
         </Suspense>
       </div>
     </TonConnectUIProvider>

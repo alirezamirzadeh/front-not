@@ -1,23 +1,44 @@
-import { useAccountData } from '@/hooks/useAccountData'; // ۱. استفاده از هوک سفارشی
+import { useEffect, useTransition } from 'react';
+import { useAccountData } from '@/hooks/useAccountData'; // ۱. ایمپورت کردن هوک جدید
 import { HistoryList } from '@/components/ui/HistoryList';
 import { HistorySkeleton } from '@/components/ui/HistorySkeleton';
 import { EmptyHistory } from '@/components/ui/EmptyHistory';
 import { ErrorMessage } from '@/components/ui/ErrorMessage';
 
 export default function HistoryBox() {
-    // ۲. تمام منطق پیچیده حالا در این یک خط خلاصه شده
-    const { status, errorMessage, history, products } = useAccountData();
+    const [isPending, startTransition] = useTransition();
+    
+    const { history, products, isLoading, error, fetchHistory, fetchProducts } = useAccountData();
 
-    console.log('HistoryBox rendered');
+    useEffect(() => {
+    
+        const fetchData = () => {
+            if (history.length === 0) {
+            
+                fetchHistory(startTransition);
+            }
+            if (products.length === 0) {
+                fetchProducts(startTransition);
+            }
+        };
+        fetchData();
+    }, [fetchHistory, fetchProducts, history.length, products.length, startTransition]);
+
+    console.log('HistoryBox rendered, using useAccountData hook.');
+
+
+    const showSkeleton = isLoading || isPending;
 
     return (
         <div className="flex-1 overflow-y-auto pb-20">
-            {status === 'loading' && <HistorySkeleton />}
-            {status === 'error' && <ErrorMessage message={errorMessage || "An error occurred."} />}
-            {status === 'success' && (
-                history.length === 0 
-                    ? <EmptyHistory /> 
-                    : <HistoryList history={history} products={products} />
+            {showSkeleton ? (
+                <HistorySkeleton />
+            ) : error ? (
+                <ErrorMessage message={error || "An error occurred."} />
+            ) : history.length === 0 ? (
+                <EmptyHistory />
+            ) : (
+                <HistoryList history={history} products={products} />
             )}
         </div>
     );
