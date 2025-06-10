@@ -1,16 +1,23 @@
 import React from 'react';
-import { Outlet } from 'react-router';
+import { Outlet, ScrollRestoration } from 'react-router';
 import BottomNavigation from '../BottomNavigation';
+// import BottomNavigation from '../BottomNavigation';
 
 const MainLayout = React.memo(() => {
-  console.log("MainLayout");
+    console.log("MainLayout");
+    return (
+        <>
+            <main>
+                <Outlet />
+            </main>
 
-  return (
-    <div className=''>
-      <Outlet />
-      <BottomNavigation />
-    </div>
-  );
+            <ScrollRestoration
+                getKey={(location, _) => location.pathname} />
+            <BottomNavigation />
+
+
+        </>
+    );
 });
 
 export default MainLayout;

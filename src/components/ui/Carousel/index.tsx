@@ -17,7 +17,7 @@ export default function Carousel({
     startIndex?: number;
     onSlideChange?: (index: number) => void;
 }) {
-    const [curr, setCurr] = useState(startIndex ||id)
+    const [curr, setCurr] = useState(startIndex ||id -1)
 
     const [touchStart, setTouchStart] = useState<number | null>(null)
     const [touchEnd, setTouchEnd] = useState<number | null>(null)

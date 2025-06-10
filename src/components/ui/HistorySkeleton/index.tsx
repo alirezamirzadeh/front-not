@@ -1,7 +1,7 @@
 export function HistorySkeleton() {
     return (
         <div className="flex flex-col gap-3">
-            {[...Array(5)].map((_, i) => (
+            {[...Array(8)].map((_, i) => (
                 <div
                     key={i}
                     className="flex gap-3 items-center h-[68px] py-2 rounded-xl animate-pulse"

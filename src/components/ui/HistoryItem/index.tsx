@@ -21,22 +21,22 @@ const formatDate = (ts: number) => {
 
 
 export function HistoryItemCard({ item, product }: HistoryItemCardProps) {
-    
-    
+
+
     return (
 
         <motion.li
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ amount: 0.2, once: true }}
             transition={{ type: 'spring', stiffness: 300, damping: 24 }}
             className="flex items-center gap-3 h-[68px] font-[590]"
         >
-            <motion.img
+            <img
                 src={product?.images?.[item.id - 1] ?? '/images/product.png'}
                 alt={product?.name ?? 'product'}
                 className="w-[60px] h-[60px] rounded-xl object-cover"
-                whileHover={{ scale: 1.05 }}
-                transition={{ duration: 0.2 }}
+
             />
             <div className="flex-1">
                 <p className="text-xs text-gray-500">
@@ -52,6 +52,6 @@ export function HistoryItemCard({ item, product }: HistoryItemCardProps) {
                     {item.total.toLocaleString()} {item.currency}
                 </p>
             </div>
-        </motion.li>       
+        </motion.li>
     );
 } 

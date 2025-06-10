@@ -6,6 +6,8 @@ export const useTheme = () => {
     const isDark = themeParams.isDark();
     document.documentElement.classList.toggle('dark', isDark);
 
+    
+
     if (isDark) {
       document.documentElement.classList.add('dark');
     } else {

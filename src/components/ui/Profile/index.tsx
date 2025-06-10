@@ -28,7 +28,7 @@ export default function Profile({ scale }: Props) {
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
-      className={cn(scale ? "gap-[1.5px]" : "gap-4 py-6", "flex flex-col items-center ")}
+      className={cn(scale ? "gap-[1.5px]" : "gap-4 py-6 ", "flex flex-col items-center ")}
     >
       <div className="relative">
         <div

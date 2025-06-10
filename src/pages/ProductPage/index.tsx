@@ -11,8 +11,7 @@ import { ProductImage } from "@/components/ui/ProductImage";
 import { CartControls } from "@/components/ui/CartControls";
 import { LoadingSkeletonSingleProduct } from "@/components/ui/LoadingSkeletonSingleProduct";
 
-import { backButton } from "@telegram-apps/sdk-react";
-import { useViewTransition } from "@/hooks/useViewTransition";
+import useBackButton from "@/hooks/useBackButton";
 const preloadComponent = () => {
     import("@/components/ui/ProductImage");
 };
@@ -23,7 +22,6 @@ export default function ProductPage() {
     const loading = useProductsStore(state => state.loading);
     const error = useProductsStore(state => state.error);
     const getSelectedImageIndex = useProductsStore(state => state.getSelectedImageIndex);
-    const navigateWithTransition = useViewTransition();
 
     const items = useCartStore(state => state.items);
     const addItem = useCartStore(state => state.addItem);
@@ -36,17 +34,9 @@ export default function ProductPage() {
     useEffect(() => {
         preloadComponent
     }, [])
-    useEffect(() => {
-        backButton.show();
-        const offClick = backButton.onClick(() => {
-            navigateWithTransition("/");
-        });
 
-        return () => {
-            offClick();
-            backButton.hide();
-        };
-    }, [navigateWithTransition]);
+
+    useBackButton();
 
     useEffect(() => {
         if (product && product.images && product.images.length > 0) {
