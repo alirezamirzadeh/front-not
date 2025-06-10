@@ -86,7 +86,9 @@ body {
   -webkit-overflow-scrolling: touch;
   touch-action: none !important;
   position: absolute;
-
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 .safe-area {
   padding-top: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top)) !important;

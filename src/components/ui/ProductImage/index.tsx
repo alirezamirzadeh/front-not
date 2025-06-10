@@ -1,167 +1,139 @@
-import { cn } from "@/lib/ui";
-import type { ProductImageProps } from "@/types/Product";
-import { AnimatePresence, motion } from "motion/react";
-import { useState, useCallback } from "react";
-import { Carousel, CarouselContent, CarouselItem } from "../Swiper";
+import { memo, useState, useEffect, useCallback, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useProductsStore } from "@/store/productsStore";
+import { useShallow } from 'zustand/react/shallow';
+import { cn } from "@/lib/ui";
+import type { Product } from "@/types/Product";
+import { Carousel, CarouselContent, CarouselItem,type CarouselApi } from "@/components/ui/Swiper";
 
-export const ProductImage = ({ mainImage, id, product, onThumbnailClick }: ProductImageProps) => {
-    const [selectedSize, setSelectedSize] = useState<string | null>("M");
-    const setSelectedImageIndex = useProductsStore(state => state.setSelectedImageIndex);
-    const getSelectedImageIndex = useProductsStore(state => state.getSelectedImageIndex);
+export const ProductImage = memo(({ product }: { product: Product }) => {
+    const { selectedIndex, setSelectedImageIndex } = useProductsStore(
+        useShallow(s => ({
+            selectedIndex: s.selectedImageIndices[product.id] ?? (product.id - 1) % product.images.length,
+            setSelectedImageIndex: s.setSelectedImageIndex,
+        }))
+    );
+
+    const [mainImage, setMainImage] = useState(product.images[selectedIndex] || product.images[0]);
+    const [selectedSize, setSelectedSize] = useState<string>("M");
+    const [api, setApi] = useState<CarouselApi>();
+    const initialScrollDone = useRef(false);
+
+    useEffect(() => {
+        if (api && !initialScrollDone.current) {
+            api.scrollTo(selectedIndex, true);
+            initialScrollDone.current = true;
+        }
+    }, [api, selectedIndex]);
+
+    useEffect(() => {
+        if (product.images && product.images[selectedIndex]) {
+            setMainImage(product.images[selectedIndex]);
+        }
+    }, [product.images, selectedIndex]);
+
+    const handleThumbnailClick = useCallback((image: string, index: number) => {
+        setMainImage(image);
+        setSelectedImageIndex(product.id, index);
+        if (api) {
+            api.scrollTo(index);
+        }
+    }, [product.id, setSelectedImageIndex, api]);
 
     const sizes = ["S", "M", "L", "XL"];
-
-    const handleThumbnailClick = useCallback((image: string) => {
-        const index = product.images.indexOf(image);
-        if (index !== -1) {
-            setSelectedImageIndex(product.id, index);
-            onThumbnailClick(image);
-        }
-    }, [product.id, product.images, setSelectedImageIndex, onThumbnailClick]);
-
-    const containerVariants = {
-        hidden: { opacity: 0, x: -50 },
-        visible: {
-            opacity: 1,
-            x: 0,
-            transition: {
-                staggerChildren: 0.1,
-                when: "beforeChildren",
-            },
-        },
+    
+    const listVariants = {
+        visible: { transition: { staggerChildren: 0.05, delayChildren: 0.2 } },
+        hidden: {},
     };
-    // const itemVariants = {
-    //     hidden: { opacity: 0, y: 5 },
-    //     visible: {
-    //         opacity: 1,
-    //         y: 0,
-    //         transition: {
-    //             type: "spring",
-    //             stiffness: 300,
-    //             damping: 24,
-    //         },
-    //     },
-
-    // };
+    const itemVariants = {
+        visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
+        hidden: { opacity: 0, y: 15 },
+    };
 
     return (
-        <div className="flex-grow flex flex-col space-y-2 overflow-y-auto">
-            <AnimatePresence mode="wait">
-                <motion.div
-                    key={mainImage || "placeholder"}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full rounded-[20px] relative px-4 overflow-hidden flex-grow"
-                >
-                    {mainImage ? (
-                        <div
-                            className="w-full h-full rounded-[20px] overflow-hidden"
-                            
-                        >
-                            <picture style={{
-                                viewTransitionName: `product-image-${id}`
-                            }}>
-                            <img
-                                width="1500"
-                                src={mainImage}
-                                alt={product.name}
-                                className="w-full h-full object-cover rounded-[20px]"
-                            />
-                            </picture>
-                        </div>
-                    ) : (
-                        <div className="w-full h-full bg-gray-200 dark:bg-white/10 rounded-[20px]" />
-                    )}
-                    <div className="absolute bottom-3 left-7 flex items-center gap-2">
-                        {sizes.map((size) => (
-                            <motion.div
-                                key={size}
-                                className={cn(
-                                    "rounded-md text-white w-9 h-9 flex justify-center items-center cursor-pointer",
-                                    selectedSize === size
-                                        ? "bg-black dark:bg-white"
-                                        : "bg-black/8 backdrop-invert backdrop-opacity-30"
-                                )}
-                                onClick={() => setSelectedSize(size)}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                animate={{
-                                    scale: selectedSize === size ? 1.1 : 1,
-                                    backgroundColor: selectedSize === size
-                                        ? "rgba(0, 0, 0, 0.8)"
-                                        : "rgba(0, 0, 0, 0.08)"
-                                }}
-                                transition={{ duration: 0.2 }}
-                            >
-                                {size}
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
-            </AnimatePresence>
-
-            {
-                product.images && product.images.length > 0 && (
+        <motion.div
+            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+            className="flex-grow flex flex-col space-y-2 overflow-hidden pt-2"
+        >
+            <div className="w-full relative px-4 flex-grow min-h-0">
+                <AnimatePresence mode="wait">
                     <motion.div
-                        className="flex  snap-x snap-mandatory space-x-2 ml-4 pr-4 !no-scrollbar overflow-x-auto pb-2 flex-shrink-0"
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
+                        key={mainImage}
+                        initial={{ opacity: 0.8, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0.8, scale: 0.98 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="w-full h-full rounded-[20px] overflow-hidden"
                     >
-                        <Carousel opts={{
-                            align: "start",
-                            startIndex: getSelectedImageIndex(product.id)
-                        }} className="w-full max-w-sm"
-                        >
-                            <CarouselContent className="-ml-1">
-                                {product.images.map((image, idx) =>
-                                    <CarouselItem key={idx} onClick={() => handleThumbnailClick(image)}
-                                        className={cn(
-                                            "pl-2  basis-1/4",
-                                        )}>
-                                        <img
-                                            src={image}
-                                            width={80} height={80}
-                                            alt={`${product.name} ${idx + 1}`}
-                                            className={cn("w-20  rounded-xl h-20 bg-amber-50 duration-150 object-cover", mainImage === image
-                                                ? "border-black border-2 dark:border-white"
-                                                : "border-transparent ")}
-                                        />
-                                    </CarouselItem>
-                                )}
-                            </CarouselContent>
-                        </Carousel>
-
-
-                        {/*  {product.images.map((image, idx) => (
-                            <motion.div
-                                key={idx}
-                                className={cn(
-                                    "w-20 h-20 flex-shrink-0 !no-scrollbar  rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ease-in",
-                                    mainImage === image
-                                        ? "border-black dark:border-white"
-                                        : "border-transparent"
-                                )}
-                                onClick={() => onThumbnailClick(image)}
-                                variants={itemVariants}
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.95 }}
-                                layout
-                            >
-                                <img
-                                    src={image}
-                                    alt={`${product.name} ${idx + 1}`}
-                                    className="w-full h-full object-cover"
-                                />
-                            </motion.div>
-                        ))} */}
+                        <picture style={{ viewTransitionName: `product-image-${product.id}` }}>
+                            <img src={mainImage} alt={product.name} className="w-full h-full object-cover"/>
+                        </picture>
                     </motion.div>
-                )
-            }
+                </AnimatePresence>
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/20 backdrop-blur-sm p-1.5 rounded-xl">
+                    {sizes.map((size) => (
+                        <motion.button
+                            key={size}
+                            onClick={() => setSelectedSize(size)}
+                            className="relative rounded-xl text-xs font-bold w-8 h-8 flex justify-center items-center"
+                            animate={{ color: selectedSize === size ? '#000000' : '#FFFFFF' }}
+                        >
+                            {selectedSize === size && (
+                                <motion.div
+                                    layoutId="size-selector-background"
+                                    className="absolute inset-0 bg-white rounded-lg"
+                                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                                />
+                            )}
+                            <span className="relative z-10">{size}</span>
+                        </motion.button>
+                    ))}
+                </div>
+            </div>
 
-        </div >
+            {product.images.length > 1 && (
+                <div className="flex-shrink-0 ml-4 pr-4">
+                    <Carousel setApi={setApi} opts={{ align: "start", containScroll: 'keepSnaps' }} className="w-full">
+                        <motion.div
+                            className="flex"
+                            variants={listVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            {/* تغییر ۳: مارجین منفی برای تراز کردن گپ جدید */}
+                            <CarouselContent className="-ml-1">
+                                {product.images.map((image, idx) => (
+                                    // تغییر ۳: پدینگ برای ایجاد گپ 8px
+                                    <CarouselItem key={idx} onClick={() => handleThumbnailClick(image, idx)} className="pl-1 basis-auto cursor-pointer">
+                                        <motion.div
+                                            variants={itemVariants}
+                                            className="p-0.5" 
+                                        >
+                                          
+                                            <div 
+                                                className={cn(
+                                                    // تغییر ۲: طول و عرض عکس به 100px تغییر کرد
+                                                    "w-[100px] h-[100px] rounded-xl overflow-hidden border-2 transition-all",
+                                                    selectedIndex === idx ? "border-black dark:border-white" : "border-transparent" // ring-transparent to border-transparent
+                                                )}
+                                            >
+                                                <img
+                                                    src={image}
+                                                    alt={`${product.name} thumbnail ${idx + 1}`}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        </motion.div>
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                        </motion.div>
+              
+                    </Carousel>
+                </div>
+            )}
+        </motion.div>
     );
-};
+});

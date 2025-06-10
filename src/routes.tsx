@@ -2,6 +2,8 @@ import MainLayout from '@/components/layout/MainLayout';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { lazy } from 'react';
 import { createBrowserRouter, redirect, RouterProvider } from 'react-router';
+import type { LoaderFunctionArgs } from 'react-router';
+import { useProductsStore } from './store/productsStore';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
@@ -22,6 +24,24 @@ const rootLoader = async () => {
   return null;
 };
 
+const productLoader = async ({ params }: LoaderFunctionArgs) => {
+  const { id } = params;
+  if (!id) {
+    throw new Response("Not Found", { status: 404 });
+  }
+
+  await useProductsStore.getState().fetchProducts();
+
+  const products = useProductsStore.getState().products;
+  const product = products.find(p => p.id.toString() === id);
+
+  if (!product) {
+    throw new Response("Product Not Found", { status: 404 });
+  }
+
+  return { product };
+};
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -32,7 +52,7 @@ const router = createBrowserRouter([
       { path: '/account', element: <AccountPage /> },
     ],
   },
-  { path: '/product/:id', element: <ProductPage /> },
+  { path: '/product/:id', element: <ProductPage />, loader: productLoader, },
 ]);
 
 
