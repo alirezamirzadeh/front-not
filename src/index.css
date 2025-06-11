@@ -69,13 +69,17 @@ body {
 }
 .safe-area {
   padding-top: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top)) !important;
-  top: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top)) !important;
+
 }
 .safe-area-top {
 
   top: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top)) !important;
 }
 
+.safe-area-h {
+
+  height: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top)) !important ;
+}
 
 .text-main {
   font-size: 26px;
