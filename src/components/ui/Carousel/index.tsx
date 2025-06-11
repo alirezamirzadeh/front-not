@@ -1,10 +1,10 @@
-import React, { memo, useCallback } from "react";
+import { memo, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const variants = {
   enter: (direction: number) => ({
     x: direction > 0 ? "100%" : "-100%",
-    opacity: 0,
+    opacity: 1,
   }),
   center: {
     zIndex: 1,
@@ -46,10 +46,12 @@ const Carousel = memo(({
   return (
     <div className="relative w-full aspect-square overflow-hidden rounded-2xl">
       <AnimatePresence initial={false} custom={direction} mode={isLaidOut ? undefined : "wait"}>
+        {/* انیمیشن تغییر عکس با حرکت و شفافیت */}
         <motion.div
           key={page}
           custom={direction}
-          variants={!isLaidOut ? variants : {}} transition={!isLaidOut ? {
+          variants={!isLaidOut ? variants : {}}
+          transition={!isLaidOut ? {
             type: "tween",
             ease: [0.22, 1, 0.36, 1],
             duration: 0.6,
@@ -66,6 +68,7 @@ const Carousel = memo(({
 
             const power = swipePower(offset.x, velocity.x);
 
+            // وقتی کشیدن به اندازه کافی باشد، اسلاید تغییر می‌کند.
             if (power < -swipeConfidenceThreshold) {
               const newDirection = 1;
               const newPage = (page + newDirection + slides.length) % slides.length;
@@ -88,10 +91,9 @@ const Carousel = memo(({
             <div
               key={i}
               onClick={(e) => { e.stopPropagation(); if (i !== page) goToPage(i); }}
-              className={`
-                    transition-all duration-300 cursor-pointer
-                    bg-white/50 dark:bg-gray-200/50  
-                    ${page === i
+              className={`transition-all duration-300 cursor-pointer
+                bg-white/50 dark:bg-gray-200/50  
+                ${page === i
                   ? "w-[20px] h-[4px] rounded-[4px] !bg-white dark:!bg-gray-200"
                   : `rounded-full ${Math.abs(i - page) === 1
                     ? "w-[4px] h-[4px] opacity-50"
@@ -100,7 +102,7 @@ const Carousel = memo(({
                       : "w-[2px] h-[2px] opacity-30"
                   }`
                 }
-                `}
+              `}
             />
           ))}
         </div>

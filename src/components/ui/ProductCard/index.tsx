@@ -2,27 +2,27 @@ import { memo, useState, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import { useShallow } from 'zustand/react/shallow';
 import type { Product } from "@/types/Product";
-import Carousel from "../Carousel"; 
+import Carousel from "../Carousel";
 import { useProductsStore } from "@/store/productsStore";
 import TickIcon from "@/components/icon/TickIcon";
 import { useCartStore } from "@/store/cartStore";
 
-export const ProductCard = memo(({ product, onClick }: { 
-    product: Product; 
+export const ProductCard = memo(({ product, onClick }: {
+    product: Product;
     onClick: () => void;
 }) => {
     const [direction, setDirection] = useState(0);
     const [isInteracting, setIsInteracting] = useState(false);
-    
+
     const handleInteractionStart = useCallback(() => setIsInteracting(true), []);
     const handleInteractionEnd = useCallback(() => {
         setTimeout(() => setIsInteracting(false), 50);
     }, []);
 
-    const {cartItems } = useCartStore((useShallow((s) => ({cartItems: s.items})))) 
-    const { selectedIndex, setSelectedImageIndex,animatingProductId, setAnimatingProductId  } = useProductsStore(
+    const { cartItems } = useCartStore((useShallow((s) => ({ cartItems: s.items }))))
+    const { selectedIndex, setSelectedImageIndex, animatingProductId, setAnimatingProductId } = useProductsStore(
         useShallow((state) => ({
-            selectedIndex: state.selectedImageIndices[product.id] ?? product.id -1 ,
+            selectedIndex: state.selectedImageIndices[product.id] ?? product.id - 1,
             setSelectedImageIndex: state.setSelectedImageIndex,
             animatingProductId: state.animatingProductId,
             setAnimatingProductId: state.setAnimatingProductId,
@@ -46,7 +46,7 @@ export const ProductCard = memo(({ product, onClick }: {
 
     const carouselSlides = useMemo(() =>
         product.images.map((_, idx) => (
-            <div key={idx} className="w-full h-full" /> 
+            <div key={idx} className="w-full h-full" />
         )),
         [product.images]
     );
@@ -73,7 +73,7 @@ export const ProductCard = memo(({ product, onClick }: {
                     style={{ zIndex: product.id === animatingProductId ? 10 : 'auto' }}
 
                 />
-                
+
                 <div className="absolute inset-0" onClick={(e) => e.preventDefault()}>
                     <Carousel
                         page={selectedIndex}
@@ -98,7 +98,7 @@ export const ProductCard = memo(({ product, onClick }: {
                     {product.id === 2 ? "10%" : "15%"}
                 </div>
             )}
-            
+
             <div className="p-1">
                 <p className="font-semibold truncate text-sm">{product.name}</p>
                 <div>{renderPrice()} </div>
