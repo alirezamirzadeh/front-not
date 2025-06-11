@@ -14,7 +14,6 @@ const MainLayout = memo(() => {
             <main className='safe-area '>
                 <Outlet />
             </main>
-            {/* اطمینان حاصل کنید که ScrollRestoration اینجا نیست */}
             {showBottomNav && <BottomNavigation />}
         </div>
     );
