@@ -81,6 +81,10 @@ body {
   height: calc(var(--tg-viewport-safe-area-inset-top) + var(--tg-viewport-content-safe-area-inset-top)) !important ;
 }
 
+.safe-view-h {
+  height: calc(100vh - var(--tg-viewport-safe-area-inset-top) - var(--tg-viewport-content-safe-area-inset-top));
+}
+
 .text-main {
   font-size: 26px;
   font-weight: 590;

@@ -23,12 +23,12 @@ export default function ProductPage({ product }: { product: Product, onClose: ()
 
     const content = (
         <div 
-            className="fixed   !z-[99]  bg-white dark:bg-black flex items-center justify-center "
+            className="fixed  safe-area !z-[99]  bg-white dark:bg-black flex items-center justify-center "
         >
             <motion.div
                 onClick={(e) => e.stopPropagation()}
             
-                className=" h-screen w-screen  safe-area-top flex flex-col"
+                className=" safe-view-h w-screen  safe-area-top flex flex-col"
             >
                 <ProductInfo product={product} />
                 <div className="flex-grow flex flex-col overflow-hidden">
