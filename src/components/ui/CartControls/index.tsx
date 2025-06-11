@@ -76,7 +76,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                 {product.left === 0 ? (
                     <Button disabled className="flex items-center w-full gap-2">
                         <NotificationIcon />
-                        Let me know whenever it's available.
+                        Let me know when it's available.
                     </Button>
                 ) : (
                     <>
@@ -126,11 +126,18 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                             </AnimatePresence>
                         </div>
 
-                        <div className="flex-1">
+                        <AnimatePresence>
+
+                        <motion.div   initial={{ y: -10, opacity: 0 }}
+                                                animate={{ y: 0, opacity: 1 }}
+                                                exit={{ y: 10, opacity: 0 }}
+                                                transition={{ duration: 0.15 }} className="flex-1">
                             <Button onClick={handleBuyNow} className="w-full">
                                 Buy now
                             </Button>
-                        </div>
+                        </motion.div>
+                        </AnimatePresence>
+
                     </>
                 )}
             </div>
