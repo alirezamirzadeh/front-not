@@ -1,23 +1,51 @@
+// src/pages/HomePage.tsx
+
 import { useState, useEffect } from "react";
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import GridProducts from "@/components/ui/GridProducts";
-import Header from '@/components/layout/Header';
 import { useProductsStore } from "@/store/productsStore";
 import { useShallow } from "zustand/react/shallow";
 import type { Product } from "@/types/Product";
+import Header from "@/components/layout/Header";
+import GridProducts from "@/components/ui/GridProducts";
 import ProductPage from "../ProductPage";
 import FooterButton from "@/components/ui/FooterButton";
+// ... (بقیه ایمپورت‌ها)
 
 export default function HomePage() {
-    const { fetchProducts, products } = useProductsStore(useShallow((s) => ({
+    // از store هم productToShowById و هم تابع ریست آن را می‌خوانیم
+    const { 
+        products, 
+        fetchProducts, 
+        productToShowById, 
+        setProductToShowById 
+    } = useProductsStore(useShallow((s) => ({
+        products: s.products,
         fetchProducts: s.fetchProducts,
-        products: s.products
+        productToShowById: s.productToShowById,
+        setProductToShowById: s.setProductToShowById,
     })));
+    
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+    // واکشی اولیه محصولات
     useEffect(() => {
-        if (products.length === 0) fetchProducts();
+        if (products.length === 0) {
+            fetchProducts();
+        }
     }, [fetchProducts, products.length]);
+
+    // === تغییر اصلی: این useEffect مودال را بر اساس مقدار store باز می‌کند ===
+    useEffect(() => {
+        if (productToShowById && products.length > 0) {
+            const productFromUrl = products.find(p => p.id === productToShowById);
+            if (productFromUrl) {
+                setSelectedProduct(productFromUrl);
+                // بعد از باز کردن مودال، مقدار را در store ریست می‌کنیم
+                setProductToShowById(null);
+            }
+        }
+    }, [productToShowById, products, setProductToShowById]);
+
 
     return (
         <LayoutGroup>
@@ -33,7 +61,6 @@ export default function HomePage() {
             </motion.div>
 
             <AnimatePresence>
-               
                 {selectedProduct && (
                     <ProductPage
                         product={selectedProduct}

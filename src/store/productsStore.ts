@@ -23,10 +23,11 @@ interface ProductsStore extends ProductsState {
   resetTempFilters: () => void;
   getFilteredProducts: () => Product[];
   getMaxPrice: () => number;
-   fetchProducts: (startTransition?: TransitionStartFunction) => Promise<void>;
-   animatingProductId: number | null;
-   setAnimatingProductId: (id: number | null) => void;
-   
+  fetchProducts: (startTransition?: TransitionStartFunction) => Promise<void>;
+  animatingProductId: number | null;
+  setAnimatingProductId: (id: number | null) => void;
+  productToShowById: number | null;
+  setProductToShowById: (id: number | null) => void;
 }
 
 export const useProductsStore = create<ProductsStore>()(
@@ -49,6 +50,8 @@ export const useProductsStore = create<ProductsStore>()(
     },
     animatingProductId: null,
     setAnimatingProductId: (id) => set({ animatingProductId: id }),
+    productToShowById: null,
+    setProductToShowById: (id) => set({ productToShowById: id }),
     getMaxPrice: () => {
       const { products } = get();
       if (products.length === 0) return 0;
@@ -95,10 +98,10 @@ export const useProductsStore = create<ProductsStore>()(
       set({ isFiltering: true });
       await new Promise(resolve => setTimeout(resolve, 300));
       set((state) => ({
-        filters: { 
-            ...state.filters,
-            categories: state.tempFilters.categories,
-            priceRange: state.tempFilters.priceRange,
+        filters: {
+          ...state.filters,
+          categories: state.tempFilters.categories,
+          priceRange: state.tempFilters.priceRange,
         },
         isFiltering: false
       }));
@@ -106,11 +109,12 @@ export const useProductsStore = create<ProductsStore>()(
 
     resetTempFilters: () =>
       set((state) => ({
-        tempFilters: { 
+        tempFilters: {
           ...state.tempFilters,
           categories: state.filters.categories,
           priceRange: state.filters.priceRange,
-      }      })),
+        }
+      })),
 
     getFilteredProducts: () => {
       const { products, filters } = get();
@@ -136,7 +140,7 @@ export const useProductsStore = create<ProductsStore>()(
       if (get().loading || get().products.length > 0) {
         return;
       }
-      
+
       set({ loading: true, error: null });
       try {
         const res = await fetchGet<{ data: Product[] }>("items.json");
@@ -159,7 +163,7 @@ export const useProductsStore = create<ProductsStore>()(
             startTransition(() => {
               set(newState);
             });
-          }else {
+          } else {
             set(newState);
           }
         } else {
