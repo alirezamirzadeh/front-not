@@ -4,22 +4,32 @@ import { useEffect } from "react";
 import { backButton, miniApp } from "@telegram-apps/sdk-react";
 import { useLocation, useNavigate } from "react-router";
 
-import type { Product } from "@/types/Product";
+import { useProductsStore } from "@/store/productsStore";
+import { useShallow } from "zustand/react/shallow";
 
-export const GlobalBackButtonHandler = ({setSelectedProduct,product}: {setSelectedProduct: () =>void, product: Product}) => {
+export const GlobalBackButtonHandler = () => {
     const navigate = useNavigate();
     const location = useLocation();
     
+    const {
+  
+        setSelectedProduct,
+        selectedProduct
+    } = useProductsStore(useShallow((s) => ({
 
+        setSelectedProduct: s.setSelectedProduct,
+        selectedProduct:s.selectedProduct
+    })));
 
     useEffect(() => {
         backButton.mount();
 
         const handleBackClick = () => {
-            if (product) {
-                setSelectedProduct();
+            if (selectedProduct) {
+                setSelectedProduct(null);
             }
             else if (location.pathname !== '/') {
+                setSelectedProduct(null);
                 navigate(-1);
             }
             else {
@@ -27,7 +37,7 @@ export const GlobalBackButtonHandler = ({setSelectedProduct,product}: {setSelect
             }
         };
         
-        if (product || location.pathname !== '/') {
+        if (selectedProduct || location.pathname !== '/') {
             backButton.show();
         } else {
             backButton.hide();
@@ -39,7 +49,7 @@ export const GlobalBackButtonHandler = ({setSelectedProduct,product}: {setSelect
             backButton.unmount();
         };
 
-    }, [location.pathname,product, setSelectedProduct, navigate]);
+    }, [location.pathname,selectedProduct, setSelectedProduct, navigate]);
     
     return null;
 };

@@ -1,6 +1,7 @@
 import { Outlet, useLocation } from 'react-router';
 import BottomNavigation from '../BottomNavigation';
 import { memo } from 'react';
+import { GlobalBackButtonHandler } from '@/hooks/GlobalBackButtonHandler';
 
 const MainLayout = memo(() => {
     const location = useLocation();
@@ -12,7 +13,7 @@ const MainLayout = memo(() => {
                 <Outlet />
             </main>
             {showBottomNav && <BottomNavigation />}
-            {/* <GlobalBackButtonHandler /> */}
+            <GlobalBackButtonHandler />
 
         </div>
     );

@@ -1,30 +1,31 @@
 // src/pages/HomePage.tsx
 
-import { useState, useEffect } from "react";
+import {  useEffect } from "react";
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useProductsStore } from "@/store/productsStore";
 import { useShallow } from "zustand/react/shallow";
-import type { Product } from "@/types/Product";
 import Header from "@/components/layout/Header";
 import GridProducts from "@/components/ui/GridProducts";
 import ProductPage from "../ProductPage";
 import FooterButton from "@/components/ui/FooterButton";
-import { GlobalBackButtonHandler } from "@/hooks/GlobalBackButtonHandler";
 
 export default function HomePage() {
     const {
         products,
         fetchProducts,
         productToShowById,
-        setProductToShowById
+        setProductToShowById,
+        setSelectedProduct,
+        selectedProduct
     } = useProductsStore(useShallow((s) => ({
         products: s.products,
         fetchProducts: s.fetchProducts,
         productToShowById: s.productToShowById,
         setProductToShowById: s.setProductToShowById,
+        setSelectedProduct: s.setSelectedProduct,
+        selectedProduct:s.selectedProduct
     })));
 
-    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     useEffect(() => {
         if (products.length === 0) {
@@ -41,7 +42,7 @@ export default function HomePage() {
             }
         }
     }, [productToShowById, products, setProductToShowById]);
-    GlobalBackButtonHandler({ setSelectedProduct: () => setSelectedProduct(null), product: selectedProduct! })
+ 
 
     return (
         <LayoutGroup>

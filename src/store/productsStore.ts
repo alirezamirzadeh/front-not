@@ -28,6 +28,8 @@ interface ProductsStore extends ProductsState {
   setAnimatingProductId: (id: number | null) => void;
   productToShowById: number | null;
   setProductToShowById: (id: number | null) => void;
+  setSelectedProduct:  (product: Product | null) => void ;
+  selectedProduct: Product | null;
 }
 
 export const useProductsStore = create<ProductsStore>()(
@@ -51,6 +53,8 @@ export const useProductsStore = create<ProductsStore>()(
     animatingProductId: null,
     setAnimatingProductId: (id) => set({ animatingProductId: id }),
     productToShowById: null,
+    selectedProduct: null,
+    setSelectedProduct: (product) => set({selectedProduct:product}),
     setProductToShowById: (id) => set({ productToShowById: id }),
     getMaxPrice: () => {
       const { products } = get();
