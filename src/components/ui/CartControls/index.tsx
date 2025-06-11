@@ -89,9 +89,9 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.9 }}
                                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                        className="bg-black/8 dark:bg-white/8 rounded-lg h-full flex justify-center gap-1.5 items-center px-4 font-bold text-xl"
+                                        className="bg-black/8 dark:bg-white/8 rounded-lg h-full flex justify-center gap-1.5 items-center  font-bold text-xl"
                                     >
-                                        <motion.button className="scale-x-200" onClick={handleRemoveQuantity} whileTap={{ scale: 0.9 }}>-</motion.button>
+                                        <motion.button className="scale-x-200 w-full  pl-3" onClick={handleRemoveQuantity} whileTap={{ scale: 0.9 }}>-</motion.button>
                                         <AnimatePresence mode="wait">
                                             <motion.span
                                                 key={cartItem.quantity}
@@ -99,7 +99,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                                                 animate={{ y: 0, opacity: 1 }}
                                                 exit={{ y: 10, opacity: 0 }}
                                                 transition={{ duration: 0.15 }}
-                                                className="w-8 text-center"
+                                                className="w-8 text-center "
                                             >
                                                 {cartItem.quantity}
                                             </motion.span>
@@ -107,7 +107,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                                         <motion.button
                                             onClick={handleAddQuantity}
                                             disabled={cartItem.quantity >= product.left}
-                                            className={cn(cartItem.quantity >= product.left && "opacity-30 cursor-not-allowed", "text-2xl font-medium")}
+                                            className={cn(cartItem.quantity >= product.left && "opacity-30 cursor-not-allowed", "text-2xl font-medium w-full text-left pl-3")}
                                             whileTap={{ scale: 0.9 }}
                                         >
                                             +
