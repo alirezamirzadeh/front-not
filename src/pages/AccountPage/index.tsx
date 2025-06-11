@@ -3,12 +3,10 @@ import { motion } from 'framer-motion';
 import Profile from '@/components/ui/Profile';
 
 import HistoryBox from '@/components/ui/HistoryBox';
-import useBackButton from '@/hooks/useBackButton';
 
 export default function AccountPage() {
 
 
-  useBackButton()
 
 
   console.log("AccountPage");
