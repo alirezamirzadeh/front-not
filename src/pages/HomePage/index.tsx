@@ -9,20 +9,21 @@ import Header from "@/components/layout/Header";
 import GridProducts from "@/components/ui/GridProducts";
 import ProductPage from "../ProductPage";
 import FooterButton from "@/components/ui/FooterButton";
+import { GlobalBackButtonHandler } from "@/hooks/GlobalBackButtonHandler";
 
 export default function HomePage() {
-    const { 
-        products, 
-        fetchProducts, 
-        productToShowById, 
-        setProductToShowById 
+    const {
+        products,
+        fetchProducts,
+        productToShowById,
+        setProductToShowById
     } = useProductsStore(useShallow((s) => ({
         products: s.products,
         fetchProducts: s.fetchProducts,
         productToShowById: s.productToShowById,
         setProductToShowById: s.setProductToShowById,
     })));
-    
+
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
     useEffect(() => {
@@ -40,7 +41,7 @@ export default function HomePage() {
             }
         }
     }, [productToShowById, products, setProductToShowById]);
-
+    GlobalBackButtonHandler({ setSelectedProduct: () => setSelectedProduct(null), product: selectedProduct! })
 
     return (
         <LayoutGroup>

@@ -27,6 +27,8 @@ const itemVariants = {
 
 
 export const ProductImage = memo(({ product }: { product: Product }) => {
+
+    
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow(s => ({
             selectedIndex: s.selectedImageIndices[product.id] ?? product.id -1,

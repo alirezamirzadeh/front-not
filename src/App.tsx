@@ -36,6 +36,7 @@ function App() {
     <TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/tonconnect-manifest.json">
       <div className="bg-white text-black dark:bg-black dark:text-white">
           <Routes />
+          
       </div>
     </TonConnectUIProvider>
   );

@@ -7,10 +7,8 @@ import type { Product } from "@/types/Product";
 import { ProductInfo } from "@/components/ui/ProductInfo";
 import { ProductImage } from "@/components/ui/ProductImage";
 import { CartControls } from "@/components/ui/CartControls";
-import useBackButton from "@/hooks/useBackButton";
 
-export default function ProductPage({ product }: { product: Product, onClose: () => void }) {
-    useBackButton();
+export default function ProductPage({ product, onClose }: { product: Product, onClose: () => void }) {
 
     useEffect(() => {
         const originalOverflow = document.body.style.overflow;
@@ -22,12 +20,14 @@ export default function ProductPage({ product }: { product: Product, onClose: ()
     }, []);
 
     const content = (
-        <div 
+        <div
+            onClick={onClose}
+
             className="fixed  safe-area !z-[99]  bg-white dark:bg-black flex items-center justify-center "
         >
             <motion.div
                 onClick={(e) => e.stopPropagation()}
-            
+
                 className=" safe-view-h w-screen  safe-area-top flex flex-col"
             >
                 <ProductInfo product={product} />

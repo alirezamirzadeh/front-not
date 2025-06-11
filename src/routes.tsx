@@ -6,6 +6,9 @@ import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { useProductsStore } from './store/productsStore';
 import LoadingMount from './components/ui/LoadingMount';
+import RootErrorElement from './components/ui/RootErrorElement';
+import NotFoundPage from './pages/NotFoundPage';
+
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
@@ -39,6 +42,7 @@ const RootLayout = () => {
                 <div key={location.pathname} className="absolute inset-0">
                     <Suspense fallback={<LoadingMount />}>
                         <Outlet />
+                        
                     </Suspense>
                 </div>
             </AnimatePresence>
@@ -51,6 +55,7 @@ const router = createBrowserRouter([
         path: "/",
         element: <RootLayout />, 
         loader: rootLoader,
+        errorElement: <RootErrorElement />,
         children: [
             {
                 element: <MainLayout />,
@@ -67,9 +72,9 @@ const router = createBrowserRouter([
             },
 
             {
-                path: "product/:id",
-                element: <HomePage />, 
-            },
+                path: "*",
+                element: <NotFoundPage />
+            }
         ],
     },
 ]);
