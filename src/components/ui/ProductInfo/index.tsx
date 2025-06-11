@@ -17,7 +17,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
             animate={{ x: 0, opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, ease: "easeIn",delay: 0.2,  }}
-            className="flex flex-col gap-3 px-4  pb-2  flex-shrink-0"
+            className="flex dark:text-white flex-col gap-3 px-4  pb-2  flex-shrink-0"
         >
             <div className="flex justify-between items-center">
                 <h1 className="text-main text-xl font-bold flex items-center gap-2">

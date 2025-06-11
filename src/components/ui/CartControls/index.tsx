@@ -67,7 +67,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
         <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.2, ease: 'easeOut' } }}
-            className="px-4 pt-4 pb-6 flex-shrink-0 mt-auto"
+            className="px-4 pt-4 pb-6 flex-shrink-0 mt-auto text-black dark:text-white"
         >
             {showSuccess && <SuccessPayment setShow={setShowSuccess} />}
             
@@ -88,9 +88,9 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                                         animate={{ opacity: 1, scale: 1 }}
                                         exit={{ opacity: 0, scale: 0.9 }}
                                         transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                        className="bg-black/8 dark:bg-white/8 rounded-lg h-full flex justify-between items-center px-4 font-bold text-xl"
+                                        className="bg-black/8 dark:bg-white/8 rounded-lg h-full flex justify-center gap-1.5 items-center px-4 font-bold text-xl"
                                     >
-                                        <motion.button onClick={handleRemoveQuantity} whileTap={{ scale: 0.9 }}>-</motion.button>
+                                        <motion.button className="scale-x-200" onClick={handleRemoveQuantity} whileTap={{ scale: 0.9 }}>-</motion.button>
                                         <AnimatePresence mode="wait">
                                             <motion.span
                                                 key={cartItem.quantity}
@@ -106,7 +106,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                                         <motion.button
                                             onClick={handleAddQuantity}
                                             disabled={cartItem.quantity >= product.left}
-                                            className={cn(cartItem.quantity >= product.left && "opacity-30 cursor-not-allowed")}
+                                            className={cn(cartItem.quantity >= product.left && "opacity-30 cursor-not-allowed","text-2xl font-medium")}
                                             whileTap={{ scale: 0.9 }}
                                         >
                                             +
@@ -119,7 +119,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                     >
-                                        <Button onClick={handleAddToCart} className="w-full">Add to Cart</Button>
+                                        <Button onClick={handleAddToCart} className="w-full bg-black/8 dark:!text-white !text-black dark:bg-white/8">Add to Cart</Button>
                                     </motion.div>
                                 )}
                             </AnimatePresence>

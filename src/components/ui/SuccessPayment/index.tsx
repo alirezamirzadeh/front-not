@@ -13,7 +13,7 @@ export default function SuccessPayment({ setShow }: { setShow: (show: boolean) =
                         <p className="text-main">You Got It!</p>
                         <p className="text-secondary">Your purchase is on the way</p>
                     </div>
-                    <Button onClick={() => setShow(false)} className="bg-white !text-black">Awesome</Button>
+                    <Button onClick={() => setShow(false)} className="bg-white  !text-black">Awesome</Button>
                 </div>
             </motion.div>
         </AnimatePresence>
