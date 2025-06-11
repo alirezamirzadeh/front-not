@@ -24,6 +24,9 @@ interface ProductsStore extends ProductsState {
   getFilteredProducts: () => Product[];
   getMaxPrice: () => number;
    fetchProducts: (startTransition?: TransitionStartFunction) => Promise<void>;
+   animatingProductId: number | null;
+   setAnimatingProductId: (id: number | null) => void;
+   
 }
 
 export const useProductsStore = create<ProductsStore>()(
@@ -44,7 +47,8 @@ export const useProductsStore = create<ProductsStore>()(
       priceRange: [0, 0],
       searchText: "",
     },
-
+    animatingProductId: null,
+    setAnimatingProductId: (id) => set({ animatingProductId: id }),
     getMaxPrice: () => {
       const { products } = get();
       if (products.length === 0) return 0;

@@ -41,26 +41,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 
 }
 
-/* *,
-*::before,
-*::after {
-	box-sizing: border-box;
-	padding: 0;
-	margin: 0;
-	outline: none;
-	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-	-webkit-tap-highlight-color: transparent;
-	user-select: none;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	line-height: normal;
-	overscroll-behavior: none;
-}
- */
+
 
 .dark {
   color-scheme: dark;
@@ -74,18 +59,10 @@ body {
 
   box-sizing: border-box;
   overflow-x: hidden;
-  /* color: black;
-  background-color: #fff; */
-  overflow: hidden;
+  color: black;
+  background-color: #fff;
   overscroll-behavior: none;
-
 	width: 100vw;
-  height: 100vh;
-	/* padding-top: calc(var(--tg-viewport-width) /6 )!important; */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  touch-action: none !important;
-  position: absolute;
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -120,6 +97,17 @@ body {
   }
 }
 
+.clip-rounded-lg {
+  clip-path: inset(0 0 0 0 round 0.75rem); /* 12px */
+}
+
+.clip-rounded-xl {
+  clip-path: inset(0 0 0 0 round 1rem); /* 16px */
+}
+
+.clip-rounded-2xl {
+  clip-path: inset(0 0 0 0 round 1.25rem); /* 20px */
+}
 .carousel {
   display: block;
   height: 100px;
@@ -144,118 +132,4 @@ body {
   display: flex;
   justify-content: center;
   width: 100%;
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-}
-
-@keyframes fade-out {
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes slide-from-right {
-  from {
-    transform: translateX(30px);
-  }
-}
-
-@keyframes slide-to-left {
-  to {
-    transform: translateX(-30px);
-  }
-}
-
-::view-transition-old(root) {
-  animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) both fade-out,
-    300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-to-left;
-}
-
-::view-transition-new(root) {
-  animation: 300ms cubic-bezier(0.4, 0, 0.2, 1) 90ms both fade-in,
-    300ms cubic-bezier(0.4, 0, 0.2, 1) 90ms both slide-from-right;
-}
-
-::view-transition-image-pair(root) {
-  isolation: auto;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-  display: block;
-}
-
-/* Product image transitions */
-::view-transition-old(product-image-*),
-::view-transition-new(product-image-*) {
-  animation: none;
-  mix-blend-mode: normal;
-  display: block;
-}
-
-::view-transition-image-pair(product-image-*) {
-  isolation: auto;
-}
-
-/* Ensure images maintain their aspect ratio during transition */
-::view-transition-old(product-image-*) img,
-::view-transition-new(product-image-*) img {
-  object-fit: cover;
-  width: 100%;
-  height: 100%;
-}
-
-::view-transition-old(product-image-1) {
-  animation: fade-out 0.3s forwards;
-}
-
-::view-transition-new(product-image-1) {
-  animation: fade-in 0.3s forwards;
-}
-
-@keyframes fade-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-/* Bottom navigation transitions */
-::view-transition-old(bottom-nav),
-::view-transition-new(bottom-nav) {
-  animation: none;
-  mix-blend-mode: normal;
-  display: block;
-}
-
-::view-transition-image-pair(bottom-nav) {
-  isolation: auto;
-}
-
-/* Ensure the bottom nav stays visible during transitions */
-::view-transition-old(bottom-nav) {
-  animation: fade-out 0.3s forwards;
-}
-
-::view-transition-new(bottom-nav) {
-  animation: fade-in 0.3s forwards;
 }

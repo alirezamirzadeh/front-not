@@ -1,9 +1,8 @@
-import { Suspense, useEffect } from 'react';
+import {  useEffect } from 'react';
 
 import { TonConnectUIProvider } from '@tonconnect/ui-react';
 import { miniApp, themeParams, useLaunchParams, viewport } from '@telegram-apps/sdk-react';
 import { initTelegram } from './lib/initTelegram';
-import LoadingMount from './components/ui/LoadingMount';
 import Routes from './routes';
 import { useTheme } from './hooks/useTheme';
 
@@ -36,9 +35,7 @@ function App() {
   return (
     <TonConnectUIProvider manifestUrl="https://not-shop-psi.vercel.app/tonconnect-manifest.json">
       <div className="bg-white text-black dark:bg-black dark:text-white">
-        <Suspense fallback={<LoadingMount />}>
           <Routes />
-        </Suspense>
       </div>
     </TonConnectUIProvider>
   );

@@ -10,9 +10,7 @@ import Button from "../Button";
 import NotificationIcon from "@/components/icon/NotificationIcon";
 import SuccessPayment from "../SuccessPayment";
 
-// کامپوننت را با memo بهینه می‌کنیم
 export const CartControls = memo(({ product }: { product: Product }) => {
-    // ۱. اتصال بهینه به cartStore
     const { cartItem, addItem, removeItem, updateQuantity } = useCartStore(
         useShallow(state => ({
             cartItem: state.items.find(item => item.id === product.id.toString()),
@@ -27,9 +25,9 @@ export const CartControls = memo(({ product }: { product: Product }) => {
     const [tonConnectUI] = useTonConnectUI();
     const [showSuccess, setShowSuccess] = useState(false);
 
-    // ۲. تمام توابع با useCallback بهینه شده‌اند تا از رندرهای غیرضروری جلوگیری شود
+  
     const handleAddToCart = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation(); // جلوگیری از کلیک روی کارت اصلی
+        e.stopPropagation(); 
         if (!isInCart) {
             addItem({
                 id: product.id.toString(),
@@ -62,13 +60,13 @@ export const CartControls = memo(({ product }: { product: Product }) => {
         if (tonConnectUI.account) {
             setShowSuccess(true);
         }
-        // اگر کاربر متصل نباشد، دکمه TonConnectUI به صورت خودکار مودال را باز می‌کند
+     
     }, [tonConnectUI.account]);
 
     return (
         <motion.div 
-            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.2, ease: 'easeOut' } }}
             className="px-4 pt-4 pb-6 flex-shrink-0 mt-auto"
         >
             {showSuccess && <SuccessPayment setShow={setShowSuccess} />}
@@ -81,7 +79,6 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                     </Button>
                 ) : (
                     <>
-                        {/* دکمه Add to Cart / کنترلر تعداد */}
                         <div className="flex-1 relative">
                             <AnimatePresence mode="popLayout">
                                 {isInCart ? (
@@ -128,12 +125,11 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                             </AnimatePresence>
                         </div>
 
-                        {/* دکمه Buy Now */}
                         <div className="flex-1 relative">
                             <Button onClick={handleBuyNow} className="w-full">
                                 Buy now
                             </Button>
-                            {/* دکمه نامرئی TonConnect که روی دکمه Buy Now قرار می‌گیرد */}
+                         
                             {!tonConnectUI.account && (
                                 <div className="absolute inset-0 opacity-0 cursor-pointer">
                                     <TonConnectButton />

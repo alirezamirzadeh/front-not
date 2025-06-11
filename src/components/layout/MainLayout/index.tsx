@@ -1,18 +1,22 @@
-import { Outlet, ScrollRestoration } from 'react-router'; 
+// src/components/layout/MainLayout.tsx
+// این کد صحیح است و نیازی به تغییر ندارد
+
+import { Outlet, useLocation } from 'react-router';
 import BottomNavigation from '../BottomNavigation';
-import { memo } from 'motion/react';
+import { memo } from 'react';
 
 const MainLayout = memo(() => {
-    console.log("MainLayout rendered");
+    const location = useLocation();
+    const showBottomNav = ['/', '/account'].includes(location.pathname);
+
     return (
-        <>
-            <main className='safe-area'>
+        <div>
+            <main className='safe-area '>
                 <Outlet />
             </main>
-
-            <ScrollRestoration getKey={(location) => location.pathname} />
-            <BottomNavigation />
-        </>
+            {/* اطمینان حاصل کنید که ScrollRestoration اینجا نیست */}
+            {showBottomNav && <BottomNavigation />}
+        </div>
     );
 });
 

@@ -28,6 +28,7 @@ const Carousel = memo(({
   onPageChange,
   onInteractionStart,
   onInteractionEnd,
+  isLaidOut
 }: {
   children: React.ReactNode[];
   page: number;
@@ -35,6 +36,7 @@ const Carousel = memo(({
   onPageChange: (newPage: number, newDirection: number) => void;
   onInteractionStart: () => void;
   onInteractionEnd: () => void;
+  isLaidOut?: boolean;
 }) => {
   const goToPage = useCallback((newPage: number) => {
     const newDirection = newPage > page ? 1 : -1;
@@ -43,16 +45,15 @@ const Carousel = memo(({
 
   return (
     <div className="relative w-full aspect-square overflow-hidden rounded-2xl">
-      <AnimatePresence initial={false} custom={direction}>
+      <AnimatePresence initial={false} custom={direction} mode={isLaidOut ? undefined : "wait"}>
         <motion.div
           key={page}
           custom={direction}
-          variants={variants}
-          transition={{
+          variants={!isLaidOut ? variants : {}} transition={!isLaidOut ? {
             type: "tween",
             ease: [0.22, 1, 0.36, 1],
             duration: 0.6,
-          }}
+          } : { duration: 0 }}
           initial="enter"
           animate="center"
           exit="exit"
@@ -62,7 +63,7 @@ const Carousel = memo(({
           onDragStart={onInteractionStart}
           onDragEnd={(_, { offset, velocity }) => {
             onInteractionEnd();
-            
+
             const power = swipePower(offset.x, velocity.x);
 
             if (power < -swipeConfidenceThreshold) {
@@ -85,20 +86,20 @@ const Carousel = memo(({
         <div className="flex items-center justify-center gap-[4px]">
           {slides.map((_, i) => (
             <div
-                key={i}
-                onClick={(e) => { e.stopPropagation(); if (i !== page) goToPage(i); }}
-                className={`
+              key={i}
+              onClick={(e) => { e.stopPropagation(); if (i !== page) goToPage(i); }}
+              className={`
                     transition-all duration-300 cursor-pointer
                     bg-white/50 dark:bg-gray-200/50  
-                    ${page === i 
-                        ? "w-[20px] h-[4px] rounded-[4px] !bg-white dark:!bg-gray-200" // نقطه فعال
-                        : `rounded-full ${Math.abs(i - page) === 1
-                            ? "w-[4px] h-[4px] opacity-50"
-                            : Math.abs(i - page) === 2
-                                ? "w-[3px] h-[3px] opacity-40" 
-                                : "w-[2px] h-[2px] opacity-30"   
-                        }`
-                    }
+                    ${page === i
+                  ? "w-[20px] h-[4px] rounded-[4px] !bg-white dark:!bg-gray-200"
+                  : `rounded-full ${Math.abs(i - page) === 1
+                    ? "w-[4px] h-[4px] opacity-50"
+                    : Math.abs(i - page) === 2
+                      ? "w-[3px] h-[3px] opacity-40"
+                      : "w-[2px] h-[2px] opacity-30"
+                  }`
+                }
                 `}
             />
           ))}

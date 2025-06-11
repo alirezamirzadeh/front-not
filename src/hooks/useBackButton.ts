@@ -1,25 +1,23 @@
 import { useEffect } from "react";
 import { backButton } from "@telegram-apps/sdk-react";
 import { useNavigate } from "react-router";
-import { useViewTransition } from "./useViewTransition";
 
 const useBackButton = () => {
   const navigate = useNavigate();
-  const navigateWithTransition = useViewTransition();
+
 
   useEffect(() => {
-    backButton.mount(); // Mount backButton
-    backButton.show();  // Show backButton
+    backButton.mount(); 
+    backButton.show();  
 
-    const off = backButton.onClick(() =>navigateWithTransition("/"))
-     // Define the backButton action
+    const off = backButton.onClick(() =>navigate("/"))
 
     return () => {
-      off(); // Clean up the click listener
-      backButton.hide(); // Hide the backButton
-      backButton.unmount(); // Unmount the backButton
+      off(); 
+      backButton.hide(); 
+      backButton.unmount(); 
     };
-  }, [navigate]); // Re-run if navigate changes
+  }, [navigate]); 
 };
 
 export default useBackButton;

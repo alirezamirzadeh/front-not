@@ -1,65 +1,60 @@
-import MainLayout from '@/components/layout/MainLayout';
+// src/Routes.tsx
+
+import { createBrowserRouter, RouterProvider, Outlet, useLocation, redirect } from 'react-router';
+import { lazy, Suspense } from 'react';
+import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
-import { lazy } from 'react';
-import { createBrowserRouter, redirect, RouterProvider } from 'react-router';
-import type { LoaderFunctionArgs } from 'react-router';
-import { useProductsStore } from './store/productsStore';
+
+import LoadingMount from './components/ui/LoadingMount';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AccountPage = lazy(() => import('./pages/AccountPage'));
-const ProductPage = lazy(() => import('./pages/ProductPage'));
+const MainLayout = lazy(() => import('./components/layout/MainLayout'));
 
 const rootLoader = async () => {
-  console.log("Root Loader Executing...");
-  const params = retrieveLaunchParams();
-  const startParam = params.startParam as string;
-
-  if (startParam && startParam.startsWith("product_")) {
-    const productId = startParam.split("_")[1];
-    if (productId) {
-      console.log(`Redirecting to /product/${productId}`);
-      return redirect(`/product/${productId}`);
+    const params = retrieveLaunchParams();
+    const startParam = params.startParam as string;
+    if (startParam?.startsWith("product_")) {
+        return redirect(`/product/${startParam.split("_")[1]}`);
     }
-  }
-  return null;
+    return null;
 };
 
-const productLoader = async ({ params }: LoaderFunctionArgs) => {
-  const { id } = params;
-  if (!id) {
-    throw new Response("Not Found", { status: 404 });
-  }
 
-  await useProductsStore.getState().fetchProducts();
 
-  const products = useProductsStore.getState().products;
-  const product = products.find(p => p.id.toString() === id);
-
-  if (!product) {
-    throw new Response("Product Not Found", { status: 404 });
-  }
-
-  return { product };
+const RootLayout = () => {
+    const location = useLocation();
+    return (
+        <LayoutGroup>
+            <AnimatePresence >
+                <Suspense fallback={<LoadingMount />}>
+                    <div key={location.key} className="absolute inset-0">
+                        <Outlet />
+                    </div>
+                </Suspense>
+            </AnimatePresence>
+        </LayoutGroup>
+    );
 };
 
 const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    loader: rootLoader,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: '/account', element: <AccountPage /> },
-    ],
-  },
-  { path: '/product/:id', element: <ProductPage />, loader: productLoader, },
+    {
+        path: '/',
+        element: <RootLayout />,
+        children: [
+            {
+                element: <MainLayout />,
+                loader: rootLoader,
+                children: [
+                    { index: true, element: <HomePage /> },
+                    { path: 'account', element: <AccountPage /> },
+                ],
+            },
+          
+        ]
+    }
 ]);
 
-
-
 export default function Routes() {
-  return (
-    <RouterProvider router={router} />
-
-  )
+    return <RouterProvider router={router} />;
 }

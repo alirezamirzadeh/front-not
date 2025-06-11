@@ -1,79 +1,82 @@
-import { memo, useState, useEffect, useCallback, useRef } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { memo, useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useProductsStore } from "@/store/productsStore";
 import { useShallow } from 'zustand/react/shallow';
-import { cn } from "@/lib/ui";
 import type { Product } from "@/types/Product";
-import { Carousel, CarouselContent, CarouselItem,type CarouselApi } from "@/components/ui/Swiper";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/Swiper";
+
+
+const listVariants = {
+    visible: {
+        transition: {
+            delayChildren: 0.1, 
+            staggerChildren: 0.11, 
+        },
+    },
+    hidden: {},
+};
+
+const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+        y: 0,
+        opacity: 1,
+        transition: { type: 'spring', stiffness: 300, damping: 25 }
+    },
+};
+
 
 export const ProductImage = memo(({ product }: { product: Product }) => {
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow(s => ({
-            selectedIndex: s.selectedImageIndices[product.id] ?? (product.id - 1) % product.images.length,
+            selectedIndex: s.selectedImageIndices[product.id] ?? 0,
             setSelectedImageIndex: s.setSelectedImageIndex,
+
         }))
     );
 
-    const [mainImage, setMainImage] = useState(product.images[selectedIndex] || product.images[0]);
     const [selectedSize, setSelectedSize] = useState<string>("M");
     const [api, setApi] = useState<CarouselApi>();
-    const initialScrollDone = useRef(false);
 
     useEffect(() => {
-        if (api && !initialScrollDone.current) {
+        if (api && api.selectedScrollSnap() !== selectedIndex) {
             api.scrollTo(selectedIndex, true);
-            initialScrollDone.current = true;
         }
     }, [api, selectedIndex]);
 
-    useEffect(() => {
-        if (product.images && product.images[selectedIndex]) {
-            setMainImage(product.images[selectedIndex]);
-        }
-    }, [product.images, selectedIndex]);
-
-    const handleThumbnailClick = useCallback((image: string, index: number) => {
-        setMainImage(image);
+    const handleThumbnailClick = useCallback((index: number) => {
         setSelectedImageIndex(product.id, index);
-        if (api) {
-            api.scrollTo(index);
-        }
-    }, [product.id, setSelectedImageIndex, api]);
+    }, [product.id, setSelectedImageIndex]);
 
     const sizes = ["S", "M", "L", "XL"];
-    
-    const listVariants = {
-        visible: { transition: { staggerChildren: 0.05, delayChildren: 0.2 } },
-        hidden: {},
-    };
-    const itemVariants = {
-        visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } },
-        hidden: { opacity: 0, y: 15 },
-    };
+
+    const thumbnailBorderTransition = { type: 'spring', stiffness: 350, damping: 30, mass: 0.8};
+
 
     return (
-        <motion.div
-            variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="flex-grow flex flex-col space-y-2 overflow-hidden pt-2"
-        >
-            <div className="w-full relative px-4 flex-grow min-h-0">
-                <AnimatePresence mode="wait">
-                    <motion.div
-                        key={mainImage}
-                        initial={{ opacity: 0.8, scale: 0.98 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0.8, scale: 0.98 }}
-                        transition={{ duration: 0.3, ease: 'easeInOut' }}
-                        className="w-full h-full rounded-[20px] overflow-hidden"
-                    >
-                        <picture style={{ viewTransitionName: `product-image-${product.id}` }}>
-                            <img src={mainImage} alt={product.name} className="w-full h-full rounded-[20px] object-cover"/>
-                        </picture>
-                    </motion.div>
+        <div className="flex-grow flex flex-col space-y-4 overflow-hidden pt-2">
+            <div className="relative w-full px-4 flex-grow min-h-0">
+                <AnimatePresence initial={false}>
+                    <motion.img
+                        layoutId={`product-image-${product.id}`}
+                        key={product.images[selectedIndex]}
+                        src={product.images[selectedIndex]}
+                        alt={product.name}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0, position: 'absolute' }}
+                        transition={{ opacity: { duration: 0.3, ease: 'easeOut' } }}
+                        className="absolute z-[999] mx-auto inset-0 w-[calc(100vw-32px)] h-full object-cover rounded-[20px]"
+                        
+                    />
                 </AnimatePresence>
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/20 backdrop-blur-sm p-1.5 rounded-xl">
-                    {sizes.map((size) => (
+
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0, transition: { delay: 0.3, ease: "easeOut" } }}
+                    className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/20 backdrop-blur-sm p-1.5 rounded-xl"
+                >
+                     {sizes.map((size) => (
                         <motion.button
                             key={size}
                             onClick={() => setSelectedSize(size)}
@@ -81,59 +84,47 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                             animate={{ color: selectedSize === size ? '#000000' : '#FFFFFF' }}
                         >
                             {selectedSize === size && (
-                                <motion.div
-                                    layoutId="size-selector-background"
-                                    className="absolute inset-0 bg-white rounded-lg"
-                                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                                />
+                                <motion.div layoutId="size-selector-background" className="absolute inset-0 bg-white rounded-lg" transition={{ type: "spring", stiffness: 400, damping: 30 }} />
                             )}
                             <span className="relative z-10">{size}</span>
                         </motion.button>
                     ))}
-                </div>
+                </motion.div>
             </div>
 
             {product.images.length > 1 && (
-                <div className="flex-shrink-0 ml-4 pr-4">
-                    <Carousel setApi={setApi} opts={{ align: "start", containScroll: 'keepSnaps' }} className="w-full">
-                        <motion.div
-                            className="flex"
-                            variants={listVariants}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            {/* تغییر ۳: مارجین منفی برای تراز کردن گپ جدید */}
-                            <CarouselContent className="-ml-1">
-                                {product.images.map((image, idx) => (
-                                    // تغییر ۳: پدینگ برای ایجاد گپ 8px
-                                    <CarouselItem key={idx} onClick={() => handleThumbnailClick(image, idx)} className="pl-1 basis-auto cursor-pointer">
-                                        <motion.div
-                                            variants={itemVariants}
-                                            className="p-0.5" 
-                                        >
-                                          
-                                            <div 
-                                                className={cn(
-                                                    // تغییر ۲: طول و عرض عکس به 100px تغییر کرد
-                                                    "w-[100px] h-[100px] rounded-xl overflow-hidden border-2 transition-all",
-                                                    selectedIndex === idx ? "border-black dark:border-white" : "border-transparent" // ring-transparent to border-transparent
-                                                )}
-                                            >
-                                                <img
-                                                    src={image}
-                                                    alt={`${product.name} thumbnail ${idx + 1}`}
-                                                    className="w-full h-full object-cover"
+                <motion.div 
+                    variants={listVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className="flex-shrink-0"
+                >
+                    <Carousel setApi={setApi} opts={{ align: "start", containScroll: 'keepSnaps' }} className="w-full pl-4">
+                        <CarouselContent className="-ml-2">
+                            {product.images.map((image, idx) => (
+                                <CarouselItem key={idx} onClick={() => handleThumbnailClick(idx)} className="pl-2 basis-auto cursor-pointer">
+                               
+                                    <motion.div variants={itemVariants} className="relative w-[100px] h-[100px]">
+                                        <img src={image} alt={`thumb ${idx}`} className="w-full h-full object-cover rounded-xl" />
+                                        <AnimatePresence>
+                                            {selectedIndex === idx && (
+                                                <motion.div
+                                                    layoutId="thumbnail-border"
+                                                    className="absolute inset-0 border-2 border-black dark:border-white rounded-xl pointer-events-none"
+                                                    initial={{ opacity: 0 }}
+                                                    animate={{ opacity: 1 }}
+                                                    exit={{ opacity: 0 }}
+                                                    transition={thumbnailBorderTransition}
                                                 />
-                                            </div>
-                                        </motion.div>
-                                    </CarouselItem>
-                                ))}
-                            </CarouselContent>
-                        </motion.div>
-              
+                                            )}
+                                        </AnimatePresence>
+                                    </motion.div>
+                                </CarouselItem>
+                            ))}
+                        </CarouselContent>
                     </Carousel>
-                </div>
+                </motion.div>
             )}
-        </motion.div>
+        </div>
     );
 });

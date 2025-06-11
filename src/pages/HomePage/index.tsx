@@ -1,48 +1,45 @@
-
+import { useState, useEffect } from "react";
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import GridProducts from "@/components/ui/GridProducts";
 import Header from '@/components/layout/Header';
-import { motion } from 'framer-motion';
-import { useEffect } from "react";
 import { useProductsStore } from "@/store/productsStore";
 import { useShallow } from "zustand/react/shallow";
-import FooterButton from "@/components/ui/FooterButton";
-
+import type { Product } from "@/types/Product";
+import ProductPage from "../ProductPage";
 
 export default function HomePage() {
-    console.log("HomePage");
-    const {
+    const { fetchProducts, products } = useProductsStore(useShallow((s) => ({
+        fetchProducts: s.fetchProducts,
+        products: s.products
+    })));
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-        fetchProducts } = useProductsStore(
-            useShallow((s) => ({
-                fetchProducts: s.fetchProducts,
-            }))
-        );
     useEffect(() => {
-        fetchProducts();
-    }, []);
+        if (products.length === 0) fetchProducts();
+    }, [fetchProducts, products.length]);
 
     return (
-
-        <motion.div
-
-            className=" overflow-y-scroll overscroll-y-contain h-[calc(100vh-10px)]  "
-        >
-
-            <Header />
-
+        <LayoutGroup>
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5, ease: "easeInOut", staggerChildren: 0.3 }}
+                animate={{ scale: selectedProduct ? 0.92 : 1 }}
+                transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-
-                <GridProducts />
-
+                <Header />
+                <GridProducts
+                    onCardClick={setSelectedProduct}
+                    selectedProductId={selectedProduct?.id}
+                />
             </motion.div>
-            <FooterButton />
 
-        </motion.div>
-
+            <AnimatePresence>
+               
+                {selectedProduct && (
+                    <ProductPage
+                        product={selectedProduct}
+                        onClose={() => setSelectedProduct(null)}
+                    />
+                )}
+            </AnimatePresence>
+        </LayoutGroup>
     );
 }
