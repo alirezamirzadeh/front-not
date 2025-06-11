@@ -74,7 +74,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                 <motion.div
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0, transition: { delay: 0.3, ease: "easeOut" } }}
-                    className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/20 backdrop-blur-sm p-1.5 rounded-xl"
+                    className="absolute z-[999999] bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/20 backdrop-blur-sm p-1.5 rounded-xl"
                 >
                      {sizes.map((size) => (
                         <motion.button
@@ -84,7 +84,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                             animate={{ color: selectedSize === size ? '#000000' : '#FFFFFF' }}
                         >
                             {selectedSize === size && (
-                                <motion.div layoutId="size-selector-background" className="absolute inset-0 bg-white rounded-lg" transition={{ type: "spring", stiffness: 400, damping: 30 }} />
+                                <motion.div layoutId="size-selector-background" className="absolute  inset-0 bg-white rounded-lg" transition={{ type: "spring", stiffness: 400, damping: 30 }} />
                             )}
                             <span className="relative z-10">{size}</span>
                         </motion.button>
