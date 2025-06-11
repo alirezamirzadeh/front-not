@@ -6,6 +6,7 @@ import { useProductsStore } from "@/store/productsStore";
 import { useShallow } from "zustand/react/shallow";
 import type { Product } from "@/types/Product";
 import ProductPage from "../ProductPage";
+import FooterButton from "@/components/ui/FooterButton";
 
 export default function HomePage() {
     const { fetchProducts, products } = useProductsStore(useShallow((s) => ({
@@ -40,6 +41,7 @@ export default function HomePage() {
                     />
                 )}
             </AnimatePresence>
+            <FooterButton />
         </LayoutGroup>
     );
 }
