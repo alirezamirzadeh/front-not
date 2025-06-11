@@ -2,7 +2,7 @@ import { memo, useCallback, useState } from "react";
 import { useCartStore } from "@/store/cartStore";
 import { useShallow } from 'zustand/react/shallow';
 import { AnimatePresence, motion } from "framer-motion";
-import { TonConnectButton, useTonConnectUI } from "@tonconnect/ui-react";
+import { useTonConnectUI } from "@tonconnect/ui-react";
 import { cn } from "@/lib/ui";
 import type { Product } from "@/types/Product";
 
@@ -19,15 +19,15 @@ export const CartControls = memo(({ product }: { product: Product }) => {
             updateQuantity: state.updateQuantity,
         }))
     );
-    
+
     const isInCart = !!cartItem;
-    
+
     const [tonConnectUI] = useTonConnectUI();
     const [showSuccess, setShowSuccess] = useState(false);
 
-  
+
     const handleAddToCart = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation(); 
+        e.stopPropagation();
         if (!isInCart) {
             addItem({
                 id: product.id.toString(),
@@ -38,7 +38,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
             });
         }
     }, [isInCart, addItem, product]);
-    
+
     const handleAddQuantity = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
         if (cartItem && cartItem.quantity < product.left) {
@@ -55,27 +55,28 @@ export const CartControls = memo(({ product }: { product: Product }) => {
         }
     }, [cartItem, updateQuantity, removeItem, product.id]);
 
-    const handleBuyNow = useCallback((e: React.MouseEvent) => {
-        e.stopPropagation();
-        if (tonConnectUI.account) {
+    const handleBuyNow = useCallback(() => {
+        if (tonConnectUI.connected) { 
             setShowSuccess(true);
+        } else {
+            tonConnectUI.openModal();
         }
-     
-    }, [tonConnectUI.account]);
+    }, [tonConnectUI]);
+
 
     return (
-        <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.2, ease: 'easeOut' } }}
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.2, ease: 'easeOut' } }}
             className="px-4 pt-4 pb-6 flex-shrink-0 mt-auto text-black dark:text-white"
         >
             {showSuccess && <SuccessPayment setShow={setShowSuccess} />}
-            
+
             <div className="flex gap-2">
                 {product.left === 0 ? (
                     <Button disabled className="flex items-center w-full gap-2">
                         <NotificationIcon />
-                        Out of Stock
+                        Let me know whenever it's available.
                     </Button>
                 ) : (
                     <>
@@ -106,7 +107,7 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                                         <motion.button
                                             onClick={handleAddQuantity}
                                             disabled={cartItem.quantity >= product.left}
-                                            className={cn(cartItem.quantity >= product.left && "opacity-30 cursor-not-allowed","text-2xl font-medium")}
+                                            className={cn(cartItem.quantity >= product.left && "opacity-30 cursor-not-allowed", "text-2xl font-medium")}
                                             whileTap={{ scale: 0.9 }}
                                         >
                                             +
@@ -125,16 +126,10 @@ export const CartControls = memo(({ product }: { product: Product }) => {
                             </AnimatePresence>
                         </div>
 
-                        <div className="flex-1 relative">
+                        <div className="flex-1">
                             <Button onClick={handleBuyNow} className="w-full">
                                 Buy now
                             </Button>
-                         
-                            {!tonConnectUI.account && (
-                                <div className="absolute inset-0 opacity-0 cursor-pointer">
-                                    <TonConnectButton />
-                                </div>
-                            )}
                         </div>
                     </>
                 )}
