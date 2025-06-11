@@ -11,7 +11,7 @@ const Header = memo(() => {
     return (
         <header
 
-            className="fixed safe-area top-0 w-full  z-[999] home  bg-white dark:bg-black border-b  border-white  dark:border-black"
+            className="fixed safe-area top-0 w-full  z-[50] home  bg-white dark:bg-black border-b  border-white  dark:border-black"
         >
             <div className="flex items-center justify-between px-4 py-3">
                 <h1 className="text-main">Not Store</h1>

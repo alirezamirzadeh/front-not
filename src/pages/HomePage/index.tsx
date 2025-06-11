@@ -1,6 +1,6 @@
 // src/pages/HomePage.tsx
 
-import {  useEffect } from "react";
+import { useEffect } from "react";
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useProductsStore } from "@/store/productsStore";
 import { useShallow } from "zustand/react/shallow";
@@ -23,7 +23,7 @@ export default function HomePage() {
         productToShowById: s.productToShowById,
         setProductToShowById: s.setProductToShowById,
         setSelectedProduct: s.setSelectedProduct,
-        selectedProduct:s.selectedProduct
+        selectedProduct: s.selectedProduct
     })));
 
 
@@ -42,15 +42,16 @@ export default function HomePage() {
             }
         }
     }, [productToShowById, products, setProductToShowById]);
- 
+
 
     return (
         <LayoutGroup>
+            <Header />
+
             <motion.div
                 animate={{ scale: selectedProduct ? 0.92 : 1 }}
                 transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             >
-                <Header />
                 <GridProducts
                     onCardClick={setSelectedProduct}
                     selectedProductId={selectedProduct?.id}
