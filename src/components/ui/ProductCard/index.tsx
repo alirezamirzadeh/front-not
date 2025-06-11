@@ -22,7 +22,7 @@ export const ProductCard = memo(({ product, onClick }: {
     const {cartItems } = useCartStore((useShallow((s) => ({cartItems: s.items})))) 
     const { selectedIndex, setSelectedImageIndex,animatingProductId, setAnimatingProductId  } = useProductsStore(
         useShallow((state) => ({
-            selectedIndex: state.selectedImageIndices[product.id] ?? 0,
+            selectedIndex: state.selectedImageIndices[product.id] ?? product.id -1 ,
             setSelectedImageIndex: state.setSelectedImageIndex,
             animatingProductId: state.animatingProductId,
             setAnimatingProductId: state.setAnimatingProductId,
