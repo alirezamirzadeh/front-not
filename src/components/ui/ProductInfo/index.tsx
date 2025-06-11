@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 export const ProductInfo = ({ product }: ProductInfoProps) => {
     const handleShare = () => {
         const productUrl = `https://t.me/NOTFrontContestBot/start?startapp=product_${product.id}`;
-        shareURL.ifAvailable(productUrl, `Check out this amazing product: ${product.name} ${product.images}`);
+        shareURL.ifAvailable(productUrl, `Hi 😍 Check out this amazing product: ${product.name} `);
   
         
         
