@@ -13,7 +13,7 @@ export default function AccountPage() {
 
   return (
       <motion.div
-      className="px-4    relative overflow-y-scroll overscroll-y-contain h-[calc(100vh-20px)] w-screen min-h-screen flex flex-col"
+      className="px-4 safe-area    relative overflow-y-scroll overscroll-y-contain h-[calc(100vh-20px)] w-screen min-h-screen flex flex-col"
 
     >
       <div className="sticky top-0  bg-white dark:bg-black z-10">
