@@ -23,7 +23,7 @@ export default function ProductPage({ product }: { product: Product, onClose: ()
 
     const content = (
         <div 
-            className="fixed   h-screen  z-[9999]  bg-white dark:bg-black flex items-center justify-center "
+            className="fixed safe-area  h-screen  z-[9999]  bg-white dark:bg-black flex items-center justify-center "
         >
             <motion.div
                 onClick={(e) => e.stopPropagation()}
