@@ -9,10 +9,8 @@ import Header from "@/components/layout/Header";
 import GridProducts from "@/components/ui/GridProducts";
 import ProductPage from "../ProductPage";
 import FooterButton from "@/components/ui/FooterButton";
-// ... (بقیه ایمپورت‌ها)
 
 export default function HomePage() {
-    // از store هم productToShowById و هم تابع ریست آن را می‌خوانیم
     const { 
         products, 
         fetchProducts, 
@@ -27,20 +25,17 @@ export default function HomePage() {
     
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
-    // واکشی اولیه محصولات
     useEffect(() => {
         if (products.length === 0) {
             fetchProducts();
         }
     }, [fetchProducts, products.length]);
 
-    // === تغییر اصلی: این useEffect مودال را بر اساس مقدار store باز می‌کند ===
     useEffect(() => {
         if (productToShowById && products.length > 0) {
             const productFromUrl = products.find(p => p.id === productToShowById);
             if (productFromUrl) {
                 setSelectedProduct(productFromUrl);
-                // بعد از باز کردن مودال، مقدار را در store ریست می‌کنیم
                 setProductToShowById(null);
             }
         }

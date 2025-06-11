@@ -1,7 +1,7 @@
 // src/Routes.tsx
 
-import { createBrowserRouter, RouterProvider, Outlet, useLocation, useNavigate, redirect } from 'react-router';
-import { lazy, Suspense, useEffect } from 'react';
+import { createBrowserRouter, RouterProvider, Outlet, useLocation,  } from 'react-router';
+import { lazy, Suspense } from 'react';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
 import { retrieveLaunchParams } from '@telegram-apps/sdk-react';
 import { useProductsStore } from './store/productsStore';
@@ -13,14 +13,13 @@ const MainLayout = lazy(() => import('./components/layout/MainLayout'));
 
 const rootLoader = async () => {
     try {
-        console.log("Root Loader IS EXECUTING!"); // لاگ جدید برای تست
+        console.log("Root Loader IS EXECUTING!"); 
         await useProductsStore.getState().fetchProducts();
         const params = retrieveLaunchParams();
         const startParam = params.tgWebAppStartParam;
         
         if (startParam && startParam.startsWith("product_")) {
             const productId = parseInt(startParam.split("_")[1], 10);
-            console.log(555555555,productId,startParam.split("_")[1]);
             
             if (!isNaN(productId)) {
                 useProductsStore.getState().setProductToShowById(productId);
@@ -47,16 +46,13 @@ const RootLayout = () => {
     );
 };
 
-// === ساختار جدید و پایدار router ===
 const router = createBrowserRouter([
     {
         path: "/",
-        element: <RootLayout />, // RootLayout والد همه چیز است
-        // loader را بهب خود مسیر ریشه متصل می‌کنیم
+        element: <RootLayout />, 
         loader: rootLoader,
         children: [
             {
-                // MainLayout دیگر loader ندارد
                 element: <MainLayout />,
                 children: [
                     {
@@ -72,7 +68,7 @@ const router = createBrowserRouter([
 
             {
                 path: "product/:id",
-                element: <HomePage />, // در حالت رفرش، HomePage را نشان بده تا مودال باز شود
+                element: <HomePage />, 
             },
         ],
     },
