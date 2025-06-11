@@ -57,7 +57,7 @@ export const ProductCard = memo(({ product, onClick }: {
             <>
 
                 {product.price.toLocaleString()}
-                <span className="opacity-50 ml-1"> {product.currency}</span>
+                <span className="opacity-50 ml-1">{product.currency}</span>
                 {(product.id === 2 || product.id === 5) && <span className="opacity-80  text-black/50 dark:text-white/50 ml-1 line-through">{(product.price + product.price * (product.id === 2 ? 0.1 : 0.15)).toLocaleString()} </span>}
             </>
         );
