@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Button from "@/components/ui/Button";
 import CloseButton from "@/components/ui/CloseButton";
 import { DrawerClose, DrawerFooter, DrawerHeader, DrawerTitle, DrawerDescription } from "@/components/ui/Drawer";
+import { cn } from "@/lib/ui";
 
 export const CartContent = () => {
     const { items, removeItem } = useCartStore();
@@ -13,8 +14,8 @@ export const CartContent = () => {
 
     return (
         <>
-
-            <DrawerHeader className="flex-none flex flex-col h-full">
+           
+            <DrawerHeader className={cn(items.length > 2  && " h-[380px]" , "flex-none flex flex-col duration-300 ease-out")}>
                 <DrawerClose>
                     <DrawerClose>
                         <CloseButton className="top-4 right-[14px] w-[28px] h-[28px]" ClassNameIcon="opacity-20 w-[10px] h-[10px]" />
@@ -25,7 +26,7 @@ export const CartContent = () => {
                 <motion.p
                     initial={{ y: -10, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    className="text-[20px] font-[590] w-full text-center mb-4 -translate-y-2"
+                    className="text-[20px] font-[590] w-full text-center -translate-y-2"
                 >
                     {items.length !== 0 && "Cart"}
                 </motion.p>
