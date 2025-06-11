@@ -22,7 +22,7 @@ export default function GridProducts({ onCardClick  }: { onCardClick: (product: 
     if (filteredProducts.length === 0) return <NotFoundProducts />;
 
     return (
-        <div className="grid grid-cols-2   gap-x-3 gap-y-7 px-4 pb-20 ">
+        <div className="grid grid-cols-2   gap-x-3 gap-y-7 px-4 pb-24 ">
             {filteredProducts.map((product) => (
                 
                 <ProductCard 
