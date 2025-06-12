@@ -6,33 +6,23 @@ import type { Product } from "@/types/Product";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/Swiper";
 
 const listVariants = {
-    visible: {
-        transition: {
-            delayChildren: 0.1, 
-            staggerChildren: 0.11, 
-        },
-    },
+    visible: { transition: { delayChildren: 0.1, staggerChildren: 0.11 } },
     hidden: {},
 };
 
 const itemVariants = {
     hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-        transition: { type: 'spring', stiffness: 300, damping: 25 }
-    },
+    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 300, damping: 25 } },
 };
 
 export const ProductImage = memo(({ product }: { product: Product }) => {
-
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow(s => ({
             selectedIndex: s.selectedImageIndices[product.id] ?? product.id - 1,
             setSelectedImageIndex: s.setSelectedImageIndex,
         }))
     );
-    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [modalCurrentIndex, setModalCurrentIndex] = useState(selectedIndex);
 
@@ -44,64 +34,61 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
         if (thumbApi && thumbApi.selectedScrollSnap() !== selectedIndex) {
             thumbApi.scrollTo(selectedIndex);
         }
-        if (isModalOpen && modalApi && modalApi.selectedScrollSnap() !== modalCurrentIndex) {
-            modalApi.scrollTo(modalCurrentIndex);
-        }
-    }, [selectedIndex, modalCurrentIndex, thumbApi, modalApi, isModalOpen]);
-    
+    }, [selectedIndex, thumbApi]);
+
     useEffect(() => {
         if (isModalOpen) {
             setModalCurrentIndex(selectedIndex);
         }
     }, [isModalOpen, selectedIndex]);
-    
+
     useEffect(() => {
         if (!modalApi) return;
-        const onModalSelect = () => {
-            const newIndex = modalApi.selectedScrollSnap();
-            setModalCurrentIndex(newIndex);
-        };
+        const onModalSelect = () => setModalCurrentIndex(modalApi.selectedScrollSnap());
         modalApi.on("select", onModalSelect);
         return () => {
             modalApi.off("select", onModalSelect);
-        }
-    }, [modalApi, setModalCurrentIndex]);
+        };
+    }, [modalApi]);
+
+    // ✅ تابع جدید برای جلوگیری از نشت رویداد سوایپ به اسلایدر والد
+    const handlePanStart = (event: MouseEvent | TouchEvent | PointerEvent) => {
+        event.stopPropagation();
+    };
 
     const handleThumbnailClick = useCallback((index: number) => {
         setSelectedImageIndex(product.id, index);
     }, [product.id, setSelectedImageIndex]);
-    
-    const handleMainImageSwipe = useCallback((_: any, { offset }: { offset: { x: number, y: number }}) => {
+
+    const handleMainImageSwipe = useCallback((_: any, { offset }: { offset: { x: number, y: number } }) => {
         const swipeThreshold = 50;
         if (offset.x < -swipeThreshold) {
-            const nextIndex = selectedIndex === product.images.length - 1 ? 0 : selectedIndex + 1;
+            const nextIndex = (selectedIndex + 1) % product.images.length;
             setSelectedImageIndex(product.id, nextIndex);
         } else if (offset.x > swipeThreshold) {
-            const prevIndex = selectedIndex === 0 ? product.images.length - 1 : selectedIndex - 1;
+            const prevIndex = (selectedIndex - 1 + product.images.length) % product.images.length;
             setSelectedImageIndex(product.id, prevIndex);
         }
     }, [selectedIndex, product.id, product.images.length, setSelectedImageIndex]);
-    
-    const handleCloseModal = () => {
-        // First update the main image index to the one currently viewed in the modal
-        setSelectedImageIndex(product.id, modalCurrentIndex);
-        // Then close the modal
-        setIsModalOpen(false);
-    };
+
+    const handleCloseModal = () => setIsModalOpen(false);
+
+    const handleUpdateIndexOnExit = () => setSelectedImageIndex(product.id, modalCurrentIndex);
 
     const sizes = ["S", "M", "L", "XL"];
-    const thumbnailBorderTransition = { type: 'spring', stiffness: 350, damping: 30, mass: 0.8};
+    const thumbnailBorderTransition = { type: 'spring', stiffness: 350, damping: 30, mass: 0.8 };
 
     return (
         <>
             <div className="flex-grow flex flex-col space-y-4 overflow-hidden pt-2">
                 <div className="relative w-full px-4 flex-grow min-h-0">
                     {!isModalOpen && (
-                         <motion.div
-                            className="w-full h-full  cursor-pointer"
+                        <motion.div
+                            className="w-full h-full cursor-pointer"
                             onTap={() => setIsModalOpen(true)}
+                            onPanStart={handlePanStart} // ✅ جلوگیری از سوایپ همزمان
                             onPanEnd={handleMainImageSwipe}
-                         >
+                        >
                             <AnimatePresence initial={false}>
                                 <motion.img
                                     className="pointer-events-none absolute z-10 inset-0 w-[calc(100vw-28px)] ml-4 h-full object-cover rounded-[20px]"
@@ -117,7 +104,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                             </AnimatePresence>
                         </motion.div>
                     )}
-                    
+
                     {!isModalOpen && (
                         <motion.div
                             initial={{ opacity: 0, y: 10 }}
@@ -127,7 +114,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                             {sizes.map((size) => (
                                 <motion.button
                                     key={size}
-                                    onClick={(e) => { e.stopPropagation(); setSelectedSize(size) }}
+                                    onClick={(e) => { e.stopPropagation(); setSelectedSize(size); }}
                                     className="relative rounded-xl text-xs font-bold w-8 h-8 flex justify-center items-center"
                                     animate={{ color: selectedSize === size ? '#000000' : '#FFFFFF' }}
                                 >
@@ -140,9 +127,9 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                         </motion.div>
                     )}
                 </div>
-                
+
                 {product.images.length > 1 && (
-                     <motion.div 
+                    <motion.div
                         variants={listVariants}
                         initial="hidden"
                         animate="visible"
@@ -175,7 +162,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                 )}
             </div>
 
-            <AnimatePresence>
+            <AnimatePresence onExitComplete={handleUpdateIndexOnExit}>
                 {isModalOpen && (
                     <motion.div
                         className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 backdrop-blur-md"
@@ -193,10 +180,10 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                                 {product.images.map((image, idx) => (
                                     <CarouselItem key={idx} className="basis-5/6 md:basis-3/4">
                                         <div className="p-1" onClick={(e) => e.stopPropagation()}>
-                                            {/* ✅ FIX: The condition now uses modalCurrentIndex to ensure the exit animation targets the visible image */}
                                             {idx === modalCurrentIndex ? (
                                                 <motion.img
                                                     layoutId={`product-image-${product.id}`}
+                                                    layout={false}
                                                     src={image}
                                                     alt={`${product.name} - image ${idx + 1}`}
                                                     className="w-full h-auto max-h-[85vh] object-contain rounded-[20px]"
