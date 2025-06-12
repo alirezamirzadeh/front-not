@@ -5,7 +5,6 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Product } from "@/types/Product";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/Swiper";
 
-
 const listVariants = {
     visible: {
         transition: {
@@ -25,15 +24,12 @@ const itemVariants = {
     },
 };
 
-
 export const ProductImage = memo(({ product }: { product: Product }) => {
 
-    
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow(s => ({
-            selectedIndex: s.selectedImageIndices[product.id] ?? product.id -1,
+            selectedIndex: s.selectedImageIndices[product.id] ?? 0,
             setSelectedImageIndex: s.setSelectedImageIndex,
-
         }))
     );
 
@@ -50,16 +46,31 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
         setSelectedImageIndex(product.id, index);
     }, [product.id, setSelectedImageIndex]);
 
+    const handleSwipe = useCallback((_: any, { offset }: { offset: { x: number, y: number }}) => {
+        const swipeThreshold = 50; 
+        if (offset.x < -swipeThreshold) {
+            const nextIndex = selectedIndex === product.images.length - 1 ? 0 : selectedIndex + 1;
+            setSelectedImageIndex(product.id, nextIndex);
+        } else if (offset.x > swipeThreshold) {
+            const prevIndex = selectedIndex === 0 ? product.images.length - 1 : selectedIndex - 1;
+            setSelectedImageIndex(product.id, prevIndex);
+        }
+    }, [selectedIndex, product.id, product.images.length, setSelectedImageIndex]);
+
     const sizes = ["S", "M", "L", "XL"];
-
     const thumbnailBorderTransition = { type: 'spring', stiffness: 350, damping: 30, mass: 0.8};
-
 
     return (
         <div className="flex-grow flex flex-col space-y-4 overflow-hidden pt-2">
-            <div className="relative w-full px-4 flex-grow min-h-0">
+          
+            <motion.div
+                className="relative w-full px-4 flex-grow min-h-0"
+                onPanEnd={handleSwipe}
+            >
                 <AnimatePresence initial={false}>
                     <motion.img
+                        // این کلاس مهم است تا رویداد pan به div والد برسد
+                        className="pointer-events-none absolute z-[999] mx-auto inset-0 w-[calc(100vw-32px)] h-full object-cover rounded-[20px]"
                         layoutId={`product-image-${product.id}`}
                         key={product.images[selectedIndex]}
                         src={product.images[selectedIndex]}
@@ -68,8 +79,6 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, position: 'absolute' }}
                         transition={{ opacity: { duration: 0.3, ease: 'easeOut' } }}
-                        className="absolute z-[999] mx-auto inset-0 w-[calc(100vw-32px)] h-full object-cover rounded-[20px]"
-                        
                     />
                 </AnimatePresence>
 
@@ -86,13 +95,13 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                             animate={{ color: selectedSize === size ? '#000000' : '#FFFFFF' }}
                         >
                             {selectedSize === size && (
-                                <motion.div layoutId="size-selector-background" className="absolute  inset-0 bg-white rounded-lg" transition={{ type: "spring", stiffness: 400, damping: 30 }} />
+                                <motion.div layoutId="size-selector-background" className="absolute inset-0 bg-white rounded-lg" transition={{ type: "spring", stiffness: 400, damping: 30 }} />
                             )}
                             <span className="relative z-10">{size}</span>
                         </motion.button>
                     ))}
                 </motion.div>
-            </div>
+            </motion.div>
 
             {product.images.length > 1 && (
                 <motion.div 
