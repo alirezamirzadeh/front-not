@@ -95,14 +95,32 @@ export const ProductCard = memo(({ product, onClick }: {
 
             {(product.id === 2 || product.id === 5) && (
                 <div className="absolute top-0 rounded-tl-2xl left-0 z-10 p-1 bg-black text-white dark:bg-white dark:text-black rounded-br-lg text-sm">
-                    {product.id === 2 ? "10%" : "15%"}
+                    {product.id === 2 ? "10%" : "15%"} off
                 </div>
             )}
+
+            {(product.id === 7) && (
+                <div className="absolute top-0 rounded-tl-2xl left-0 z-10 p-1 px-2 bg-black text-white dark:bg-white dark:text-black rounded-br-lg text-sm animate-pulse">
+                    Bestseller
+                </div>
+            )}
+
+
+
 
             <div className="p-1">
                 <p className="font-semibold truncate text-sm">{product.name}</p>
                 <div>{renderPrice()} </div>
+
             </div>
+            {(
+                <p className="absolute  bottom-0 opacity-80 translate-y-2 left-1  truncate text-xs">
+                    4.{10 -product.id}⭐
+                    {(product.left < 10 && product.left >0) && <span className="animate-pulse ml-1">Only {product.left}  left</span>}
+                </p>
+            )}
+
+
         </div>
     );
 });
