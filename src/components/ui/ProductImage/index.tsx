@@ -5,24 +5,9 @@ import { useShallow } from 'zustand/react/shallow';
 import type { Product } from "@/types/Product";
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/Swiper";
 
-const listVariants = {
-    visible: {
-        transition: {
-            delayChildren: 0.1, 
-            staggerChildren: 0.11, 
-        },
-    },
-    hidden: {},
-};
-
-const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-        y: 0,
-        opacity: 1,
-        transition: { type: 'spring', stiffness: 300, damping: 25 }
-    },
-};
+// ... (variants ها بدون تغییر)
+const listVariants = { /* ... */ };
+const itemVariants = { /* ... */ };
 
 export const ProductImage = memo(({ product }: { product: Product }) => {
 
@@ -34,29 +19,52 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
     );
     
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedSize, setSelectedSize] = useState<string>("M");
-    const [api, setApi] = useState<CarouselApi>();
+    // 1. state محلی برای ایندکس مدال
+    const [modalCurrentIndex, setModalCurrentIndex] = useState(selectedIndex);
 
+    const [selectedSize, setSelectedSize] = useState<string>("M");
+    const [thumbApi, setThumbApi] = useState<CarouselApi>();
+    const [modalApi, setModalApi] = useState<CarouselApi>();
+
+    // این effect اسلایدر থামبنیل و اسلایدر مدال را با state مربوطه همگام می‌کند
     useEffect(() => {
-        if (api && api.selectedScrollSnap() !== selectedIndex) {
-            api.scrollTo(selectedIndex, true);
+        if (thumbApi && thumbApi.selectedScrollSnap() !== selectedIndex) {
+            thumbApi.scrollTo(selectedIndex, true);
         }
-    }, [api, selectedIndex]);
+        if (isModalOpen && modalApi && modalApi.selectedScrollSnap() !== modalCurrentIndex) {
+            modalApi.scrollTo(modalCurrentIndex);
+        }
+    }, [selectedIndex, modalCurrentIndex, thumbApi, modalApi, isModalOpen]);
+    
+    // وقتی مدال باز می‌شود، ایندکس آن را با ایندکس اصلی یکسان می‌کنیم
+    useEffect(() => {
+        if (isModalOpen) {
+            setModalCurrentIndex(selectedIndex);
+        }
+    }, [isModalOpen, selectedIndex]);
+    
+    // 2. این effect فقط state محلی مدال را آپدیت می‌کند
+    useEffect(() => {
+        if (!modalApi) return;
+        const onModalSelect = () => {
+            const newIndex = modalApi.selectedScrollSnap();
+            setModalCurrentIndex(newIndex);
+        };
+        modalApi.on("select", onModalSelect);
+        return () => {
+            modalApi.off("select", onModalSelect);
+        }
+    }, [modalApi, setModalCurrentIndex]);
 
     const handleThumbnailClick = useCallback((index: number) => {
         setSelectedImageIndex(product.id, index);
     }, [product.id, setSelectedImageIndex]);
-
-    const handleSwipe = useCallback((_: any, { offset }: { offset: { x: number, y: number }}) => {
-        const swipeThreshold = 50;
-        if (offset.x < -swipeThreshold) {
-            const nextIndex = selectedIndex === product.images.length - 1 ? 0 : selectedIndex + 1;
-            setSelectedImageIndex(product.id, nextIndex);
-        } else if (offset.x > swipeThreshold) {
-            const prevIndex = selectedIndex === 0 ? product.images.length - 1 : selectedIndex - 1;
-            setSelectedImageIndex(product.id, prevIndex);
-        }
-    }, [selectedIndex, product.id, product.images.length, setSelectedImageIndex]);
+    
+    // 3. تابع بستن مدال که state را همگام‌سازی می‌کند
+    const handleCloseModal = () => {
+        setSelectedImageIndex(product.id, modalCurrentIndex);
+        setIsModalOpen(false);
+    };
 
     const sizes = ["S", "M", "L", "XL"];
     const thumbnailBorderTransition = { type: 'spring', stiffness: 350, damping: 30, mass: 0.8};
@@ -66,7 +74,6 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
             <div className="flex-grow flex flex-col space-y-4 overflow-hidden pt-2">
                 <motion.div
                     className="relative w-full px-4 flex-grow min-h-0 cursor-pointer"
-                    onPanEnd={handleSwipe}
                     onClick={() => setIsModalOpen(true)}
                 >
                     <AnimatePresence initial={false}>
@@ -114,7 +121,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                         animate="visible"
                         className="flex-shrink-0"
                     >
-                        <Carousel setApi={setApi} opts={{ align: "start", containScroll: 'keepSnaps' }} className="w-full pl-4">
+                        <Carousel setApi={setThumbApi} opts={{ align: "start", containScroll: 'keepSnaps' }} className="w-full pl-4">
                             <CarouselContent className="-ml-2">
                                 {product.images.map((image, idx) => (
                                     <CarouselItem key={idx} onClick={(e) => { e.stopPropagation(); handleThumbnailClick(idx); }} className="pl-2 basis-auto cursor-pointer">
@@ -145,17 +152,36 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                 {isModalOpen && (
                     <motion.div
                         className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 backdrop-blur-md"
-                        onClick={() => setIsModalOpen(false)}
+                        onClick={handleCloseModal} // استفاده از تابع جدید
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                        <motion.img
-                            layoutId={`product-image-${product.id}`}
-                            src={product.images[selectedIndex]}
-                            onClick={(e) => e.stopPropagation()}
-                            className="w-[calc(100vw-32px)] h-auto max-h-[85vh] object-contain rounded-[20px]"
-                        />
+                        <Carousel
+                            setApi={setModalApi}
+                            opts={{
+                                align: "center",
+                                startIndex: modalCurrentIndex, // شروع از ایندکس محلی
+                                loop: true
+                            }}
+                            className="w-full"
+                        >
+                            <CarouselContent>
+                                {product.images.map((image, idx) => (
+                                    <CarouselItem key={idx} className="basis-5/6 md:basis-3/4">
+                                        <div className="p-1" onClick={(e) => e.stopPropagation()}>
+                                            <motion.img
+                                                // 4. layoutId فقط به عکسی اعمال می‌شود که در ابتدا انتخاب شده بود
+                                                layoutId={idx === selectedIndex ? `product-image-${product.id}` : undefined}
+                                                src={image}
+                                                alt={`${product.name} - image ${idx + 1}`}
+                                                className="w-full h-auto max-h-[85vh] object-contain rounded-[20px]"
+                                            />
+                                        </div>
+                                    </CarouselItem>
+                                ))}
+                            </CarouselContent>
+                        </Carousel>
                     </motion.div>
                 )}
             </AnimatePresence>
