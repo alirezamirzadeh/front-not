@@ -13,7 +13,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
 
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow(s => ({
-            selectedIndex: s.selectedImageIndices[product.id] ?? 0,
+            selectedIndex: s.selectedImageIndices[product.id] ?? product.id -1,
             setSelectedImageIndex: s.setSelectedImageIndex,
         }))
     );
@@ -26,7 +26,6 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
     const [thumbApi, setThumbApi] = useState<CarouselApi>();
     const [modalApi, setModalApi] = useState<CarouselApi>();
 
-    // این effect اسلایدر থামبنیل و اسلایدر مدال را با state مربوطه همگام می‌کند
     useEffect(() => {
         if (thumbApi && thumbApi.selectedScrollSnap() !== selectedIndex) {
             thumbApi.scrollTo(selectedIndex, true);
@@ -36,14 +35,12 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
         }
     }, [selectedIndex, modalCurrentIndex, thumbApi, modalApi, isModalOpen]);
     
-    // وقتی مدال باز می‌شود، ایندکس آن را با ایندکس اصلی یکسان می‌کنیم
     useEffect(() => {
         if (isModalOpen) {
             setModalCurrentIndex(selectedIndex);
         }
     }, [isModalOpen, selectedIndex]);
     
-    // 2. این effect فقط state محلی مدال را آپدیت می‌کند
     useEffect(() => {
         if (!modalApi) return;
         const onModalSelect = () => {
@@ -60,7 +57,6 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
         setSelectedImageIndex(product.id, index);
     }, [product.id, setSelectedImageIndex]);
     
-    // 3. تابع بستن مدال که state را همگام‌سازی می‌کند
     const handleCloseModal = () => {
         setSelectedImageIndex(product.id, modalCurrentIndex);
         setIsModalOpen(false);
@@ -152,7 +148,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                 {isModalOpen && (
                     <motion.div
                         className="fixed inset-0 z-50 flex justify-center items-center bg-black/50 backdrop-blur-md"
-                        onClick={handleCloseModal} // استفاده از تابع جدید
+                        onClick={handleCloseModal}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -161,7 +157,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                             setApi={setModalApi}
                             opts={{
                                 align: "center",
-                                startIndex: modalCurrentIndex, // شروع از ایندکس محلی
+                                startIndex: modalCurrentIndex,
                                 loop: true
                             }}
                             className="w-full"
@@ -171,7 +167,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                                     <CarouselItem key={idx} className="basis-5/6 md:basis-3/4">
                                         <div className="p-1" onClick={(e) => e.stopPropagation()}>
                                             <motion.img
-                                                // 4. layoutId فقط به عکسی اعمال می‌شود که در ابتدا انتخاب شده بود
+                                              
                                                 layoutId={idx === selectedIndex ? `product-image-${product.id}` : undefined}
                                                 src={image}
                                                 alt={`${product.name} - image ${idx + 1}`}
