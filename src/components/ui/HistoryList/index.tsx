@@ -37,7 +37,7 @@ export function HistoryList({ history, products }: HistoryListProps) {
                 style={style}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.03, ease: "easeOut" }}
+                transition={{ duration: 0.4, delay: index * 0.03 < 0.09 ? index * 0.03 : 0.03, ease: "easeOut" }}
             >
                 <div className='h-full w-full p-1'>
                     <HistoryItemCard 
