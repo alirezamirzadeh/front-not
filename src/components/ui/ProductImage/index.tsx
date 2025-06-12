@@ -28,7 +28,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
 
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow(s => ({
-            selectedIndex: s.selectedImageIndices[product.id] ?? product.id -1,
+            selectedIndex: s.selectedImageIndices[product.id] ?? product.id - 1,
             setSelectedImageIndex: s.setSelectedImageIndex,
         }))
     );
@@ -41,7 +41,6 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
     const [modalApi, setModalApi] = useState<CarouselApi>();
 
     useEffect(() => {
-        // ✅ FIX: The 'true' parameter is removed from thumbApi.scrollTo for a smooth scroll
         if (thumbApi && thumbApi.selectedScrollSnap() !== selectedIndex) {
             thumbApi.scrollTo(selectedIndex);
         }
@@ -84,7 +83,9 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
     }, [selectedIndex, product.id, product.images.length, setSelectedImageIndex]);
     
     const handleCloseModal = () => {
+        // First update the main image index to the one currently viewed in the modal
         setSelectedImageIndex(product.id, modalCurrentIndex);
+        // Then close the modal
         setIsModalOpen(false);
     };
 
@@ -185,24 +186,22 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
                     >
                         <Carousel
                             setApi={setModalApi}
-                            opts={{ align: "center", startIndex: modalCurrentIndex, loop: true }}
+                            opts={{ align: "center", startIndex: selectedIndex, loop: true }}
                             className="w-full"
                         >
                             <CarouselContent>
                                 {product.images.map((image, idx) => (
                                     <CarouselItem key={idx} className="basis-5/6 md:basis-3/4">
                                         <div className="p-1" onClick={(e) => e.stopPropagation()}>
-                                            
-                                            {idx === modalCurrentIndex && (
+                                            {/* ✅ FIX: The condition now uses modalCurrentIndex to ensure the exit animation targets the visible image */}
+                                            {idx === modalCurrentIndex ? (
                                                 <motion.img
                                                     layoutId={`product-image-${product.id}`}
                                                     src={image}
                                                     alt={`${product.name} - image ${idx + 1}`}
                                                     className="w-full h-auto max-h-[85vh] object-contain rounded-[20px]"
                                                 />
-                                            )}
-                                        
-                                            {idx !== modalCurrentIndex && (
+                                            ) : (
                                                 <img
                                                     src={image}
                                                     alt={`${product.name} - image ${idx + 1}`}
