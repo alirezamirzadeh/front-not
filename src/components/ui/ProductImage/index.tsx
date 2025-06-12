@@ -41,8 +41,9 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
     const [modalApi, setModalApi] = useState<CarouselApi>();
 
     useEffect(() => {
+        // ✅ FIX: The 'true' parameter is removed from thumbApi.scrollTo for a smooth scroll
         if (thumbApi && thumbApi.selectedScrollSnap() !== selectedIndex) {
-            thumbApi.scrollTo(selectedIndex, true);
+            thumbApi.scrollTo(selectedIndex);
         }
         if (isModalOpen && modalApi && modalApi.selectedScrollSnap() !== modalCurrentIndex) {
             modalApi.scrollTo(modalCurrentIndex);
