@@ -28,7 +28,7 @@ export const ProductImage = memo(({ product }: { product: Product }) => {
 
     const { selectedIndex, setSelectedImageIndex } = useProductsStore(
         useShallow(s => ({
-            selectedIndex: s.selectedImageIndices[product.id] ?? 0,
+            selectedIndex: s.selectedImageIndices[product.id] ?? product.id -1,
             setSelectedImageIndex: s.setSelectedImageIndex,
         }))
     );
